@@ -153,21 +153,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="cube.cpp" />
-    <ClCompile Include="lodepng.cpp" />
+    <ClCompile Include="config.cpp" />
+    <ClCompile Include="ghost.cpp" />
+    <ClCompile Include="item.cpp" />
     <ClCompile Include="main_file.cpp" />
-    <ClCompile Include="model.cpp" />
+    <ClCompile Include="pacman.cpp" />
     <ClCompile Include="shaderprogram.cpp" />
-    <ClCompile Include="teapot.cpp" />
+    <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="allmodels.h" />
+    <ClInclude Include="config.h" />
     <ClInclude Include="constants.h" />
-    <ClInclude Include="cube.h" />
-    <ClInclude Include="lodepng.h" />
-    <ClInclude Include="model.h" />
+    <ClInclude Include="ghost.h" />
+    <ClInclude Include="includes.h" />
+    <ClInclude Include="item.h" />
+    <ClInclude Include="pacman.h" />
     <ClInclude Include="shaderprogram.h" />
-    <ClInclude Include="teapot.h" />
+    <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="fshader.txt" />
