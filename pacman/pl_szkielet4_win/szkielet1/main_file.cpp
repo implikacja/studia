@@ -29,6 +29,5 @@ int main(void)
 	config conf;
 	world *w = new world();
 	conf.mainloop(*w);
-	//lalsdghfjhf
 
 }
