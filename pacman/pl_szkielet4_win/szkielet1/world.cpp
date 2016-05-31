@@ -4,21 +4,15 @@
 
 world::world()
 {
-<<<<<<< HEAD
-	
-=======
-	printf("Konstruktor world/n");
->>>>>>> origin/master
-	//itemList = new item[5];
+	cMap = new map();
 	a = new item();
 }
 
 
 world::~world()
 {
-	printf("Destruktor world/n");
+	delete cMap;
 	delete a;
-	//delete[] (itemList);
 }
 
 void world::drawScene(GLFWwindow* window, GLuint vao, ShaderProgram *shaderProgram) {
