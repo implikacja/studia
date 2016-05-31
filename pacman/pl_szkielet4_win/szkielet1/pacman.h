@@ -6,7 +6,5 @@ class pacman :
 public:
 	pacman();
 	~pacman();
-	void changePosition(char c);
-	void nextFrame();
 };
 

@@ -1,20 +1,13 @@
 #pragma once
 
 #include "includes.h"
-#include "point.h"
 using namespace glm;
 class item
 {
 public:
-	point pos;
-	mat4 P;
-	mat4 V;
-	mat4 M;
-
+	int x;
 	item();
 	~item();
 	void drawObject(GLuint vao, ShaderProgram *shaderProgram, mat4 mP, mat4 mV, mat4 mM);
-	virtual void nextFrame();
-	virtual void logicTic();
 };
 
