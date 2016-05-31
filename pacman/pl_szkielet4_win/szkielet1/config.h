@@ -1,7 +1,6 @@
 #pragma once
 #include "includes.h"
 
-
 class world;
 class config
 {

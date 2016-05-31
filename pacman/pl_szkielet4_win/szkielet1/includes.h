@@ -14,7 +14,7 @@
 #include "world.h"
 #include "item.h"
 #include <vector>
-
+#include <iostream>
 using namespace glm;
 using namespace std;
 #endif // !headers

@@ -4,12 +4,15 @@
 
 world::world()
 {
-
+	//itemList = new item[5];
+	a = new item;
 }
 
 
 world::~world()
 {
+	delete a;
+	//delete[] (itemList);
 }
 
 void world::drawScene(GLFWwindow* window, GLuint vao, ShaderProgram *shaderProgram) {
@@ -27,9 +30,13 @@ void world::drawScene(GLFWwindow* window, GLuint vao, ShaderProgram *shaderProgr
 
 	//Wylicz macierz modelu rysowanego obiektu
 	glm::mat4 M = glm::mat4(1.0f);
-	item a;
+	//item a;
 	//Narysuj obiekt
-	a.drawObject(vao, shaderProgram, P, V, M);
+	for (int i = 0; i < 9; i++)
+	{
+		
+	}
+	a->drawObject(vao, shaderProgram, P, V, M);
 	//Przerzuæ tylny bufor na przedni
 	glfwSwapBuffers(window);
 
