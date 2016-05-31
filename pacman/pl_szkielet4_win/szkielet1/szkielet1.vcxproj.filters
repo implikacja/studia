@@ -37,15 +37,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
 <<<<<<< HEAD
-<<<<<<< HEAD
     <ClCompile Include="map.cpp">
 =======
     <ClCompile Include="point.cpp">
 >>>>>>> origin/master
       <Filter>Source Files</Filter>
     </ClCompile>
-=======
->>>>>>> parent of aff3396... + obiekty w klasach
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="constants.h">
@@ -73,15 +70,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
 <<<<<<< HEAD
-<<<<<<< HEAD
     <ClInclude Include="map.h">
 =======
     <ClInclude Include="point.h">
 >>>>>>> origin/master
       <Filter>Header Files</Filter>
     </ClInclude>
-=======
->>>>>>> parent of aff3396... + obiekty w klasach
   </ItemGroup>
   <ItemGroup>
     <Text Include="fshader.txt">
