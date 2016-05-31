@@ -4,7 +4,11 @@
 
 world::world()
 {
+<<<<<<< HEAD
 	
+=======
+	printf("Konstruktor world/n");
+>>>>>>> origin/master
 	//itemList = new item[5];
 	a = new item();
 }
@@ -12,6 +16,7 @@ world::world()
 
 world::~world()
 {
+	printf("Destruktor world/n");
 	delete a;
 	//delete[] (itemList);
 }
