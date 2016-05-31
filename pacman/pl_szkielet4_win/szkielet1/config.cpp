@@ -48,19 +48,30 @@ config::config()
 		0.0f,  0.5f, 0.0f, 1.0f,
 	};
 
-	bufVertices = makeBuffer(vertices, 3, sizeof(float) * 4); //Tu musimy zrobiæ wszystkie obiekty :(
+	bufVertices[0] = makeBuffer(vertices, 3, sizeof(float) * 4); //Tu musimy zrobiæ wszystkie obiekty :(
 
 																		//Zbuduj VAO wi¹¿¹cy atrybuty z konkretnymi VBO
-	glGenVertexArrays(1, &vao); //Wygeneruj uchwyt na VAO i zapisz go do zmiennej globalnej
+	glGenVertexArrays(5, vao); //Wygeneruj uchwyt na VAO i zapisz go do zmiennej globalnej
 
-	glBindVertexArray(vao); //Uaktywnij nowo utworzony VAO
+	glBindVertexArray(vao[0]); //Uaktywnij nowo utworzony VAO
 
-	assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
-	assignVBOtoAttribute(shaderProgram, "color", bufColors, 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
-	assignVBOtoAttribute(shaderProgram, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
+	assignVBOtoAttribute(shaderProgram, "vertex", bufVertices[0], 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
+	assignVBOtoAttribute(shaderProgram, "color", bufColors[0], 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
+	assignVBOtoAttribute(shaderProgram, "normal", bufNormals[0], 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
 
 	glBindVertexArray(0); //Dezaktywuj VAO
+	glGenVertexArrays(7, vao2d); //Wygeneruj uchwyt na VAO i zapisz go do zmiennej globalnej
+
+	glBindVertexArray(vao2d[0]); //Uaktywnij nowo utworzony VAO
+
+	assignVBOtoAttribute(shaderProgram, "vertex", bufVertices2d[0], 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
+	assignVBOtoAttribute(shaderProgram, "color", bufColors2d[0], 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
+
+	glBindVertexArray(0);
+
 						  //******Koniec przygotowania obiektu************
+
+
 
 }
 
@@ -69,10 +80,13 @@ config::~config()
 {
 	delete shaderProgram; //Usuniêcie programu cieniuj¹cego
 
-	glDeleteVertexArrays(1, &vao); //Usuniêcie vao
-	glDeleteBuffers(1, &bufVertices); //Usuniêcie VBO z wierzcho³kami
-	glDeleteBuffers(1, &bufColors); //Usuniêcie VBO z kolorami
-	glDeleteBuffers(1, &bufNormals); //Usuniêcie VBO z wektorami normalnymi
+	glDeleteVertexArrays(5, vao); //Usuniêcie vao
+	glDeleteBuffers(5, bufVertices); //Usuniêcie VBO z wierzcho³kami
+	glDeleteBuffers(5, bufColors); //Usuniêcie VBO z kolorami
+	glDeleteBuffers(5, bufNormals); //Usuniêcie VBO z wektorami normalnymi
+	glDeleteVertexArrays(7, vao2d); //Usuniêcie vao
+	glDeleteBuffers(7, bufVertices2d); //Usuniêcie VBO z wierzcho³kami
+	glDeleteBuffers(7, bufColors2d); //Usuniêcie VBO z kolorami
 
 	glfwDestroyWindow(window); //Usuñ kontekst OpenGL i okno
 	glfwTerminate(); //Zwolnij zasoby zajête przez GLFW
@@ -122,7 +136,7 @@ void config::mainloop(world w)
 	//G³ówna pêtla
 	while (!glfwWindowShouldClose(window)) //Tak d³ugo jak okno nie powinno zostaæ zamkniête
 	{
-		w.drawScene(window, vao, shaderProgram); //Wykonaj procedurê rysuj¹c¹
+		w.drawScene(window, vao[0], shaderProgram); //Wykonaj procedurê rysuj¹c¹
 		glfwPollEvents(); //Wykonaj procedury callback w zaleznoœci od zdarzeñ jakie zasz³y.
 	}
 }

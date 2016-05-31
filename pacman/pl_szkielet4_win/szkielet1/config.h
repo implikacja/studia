@@ -6,13 +6,17 @@ class config
 {
 public:
 	//Uchwyty na VAO i bufory wierzcho³ków
-	GLuint vao;
-	GLuint bufVertices; //Uchwyt na bufor VBO przechowuj¹cy tablicê wspó³rzêdnych wierzcho³ków
-	GLuint bufColors;  //Uchwyt na bufor VBO przechowuj¹cy tablicê kolorów
-	GLuint bufNormals; //Uchwyt na bufor VBO przechowuj¹cy tablickê wektorów normalnych
-	GLFWwindow* window; //WskaŸnik na obiekt reprezentuj¹cy okno
-	//Uchwyty na shadery
+	GLuint vao[5];
+	GLuint vao2d[7];
+	GLuint bufVertices[5]; 
+	GLuint bufColors[5];  
+	GLuint bufNormals[5]; 
+	GLuint bufVertices2d[7];  
+	GLuint bufColors2d[7];
+	GLFWwindow* window; 
+
 	ShaderProgram *shaderProgram; //WskaŸnik na obiekt reprezentuj¹cy program cieniuj¹cy.
+
 	config();
 	~config();
 	GLuint makeBuffer(void *data, int vertexCount, int vertexSize);

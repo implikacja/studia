@@ -4,6 +4,7 @@
 
 item::item()
 {
+	mM = glm::mat4(1.0f);
 
 }
 
@@ -13,7 +14,7 @@ item::~item()
 }
 
 
-void item::drawObject(GLuint vao, ShaderProgram *shaderProgram, mat4 mP, mat4 mV, mat4 mM) {
+void item::drawObject(GLuint vao, ShaderProgram *shaderProgram, mat4 mP, mat4 mV) {
 
 	shaderProgram->use();
 

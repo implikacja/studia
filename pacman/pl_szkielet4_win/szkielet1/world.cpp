@@ -6,6 +6,7 @@ world::world()
 {
 	cMap = new map();
 	a = new item();
+	P = glm::perspective(50 * PI / 180, 1.0f, 1.0f, 50.0f); //Wylicz macierz rzutowania
 }
 
 
@@ -20,7 +21,22 @@ void world::drawScene(GLFWwindow* window, GLuint vao, ShaderProgram *shaderProgr
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
 
-	glm::mat4 P = glm::perspective(50 * PI / 180, 1.0f, 1.0f, 50.0f); //Wylicz macierz rzutowania
+		V = glm::lookAt( //Wylicz macierz widoku
+		glm::vec3(0.0f, 0.0f, -5.0f),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f));
+
+	//Narysuj obiekt
+	a->drawObject(vao, shaderProgram, P, V);
+	//Przerzuæ tylny bufor na przedni
+	glfwSwapBuffers(window);
+
+}
+
+void world::drawScene2d(GLFWwindow* window, GLuint vao2d, ShaderProgram *shaderProgram) {
+	//************Tutaj umieszczaj kod rysuj¹cy obraz******************l
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
 
 	glm::mat4 V = glm::lookAt( //Wylicz macierz widoku
 		glm::vec3(0.0f, 0.0f, -5.0f),
@@ -28,15 +44,9 @@ void world::drawScene(GLFWwindow* window, GLuint vao, ShaderProgram *shaderProgr
 		glm::vec3(0.0f, 1.0f, 0.0f));
 
 
-	//Wylicz macierz modelu rysowanego obiektu
-	glm::mat4 M = glm::mat4(1.0f);
-	//item a;
 	//Narysuj obiekt
-	for (int i = 0; i < 9; i++)
-	{
-		
-	}
-	a->drawObject(vao, shaderProgram, P, V, M);
+
+	a->drawObject(vao2d, shaderProgram, P, V);
 	//Przerzuæ tylny bufor na przedni
 	glfwSwapBuffers(window);
 
