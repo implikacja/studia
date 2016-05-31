@@ -43,9 +43,9 @@ config::config()
 																		//Zbuduj VBO z danymi obiektu do narysowania
 	//Trojkat na razie tak oszukujê
 	float vertices[] = {
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.0f,  0.5f, 0.0f
+		-0.5f, -0.5f, 0.0f, 1.0f,
+		0.5f, -0.5f, 0.0f, 1.0f,
+		0.0f,  0.5f, 0.0f, 1.0f,
 	};
 
 	bufVertices = makeBuffer(vertices, 3, sizeof(float) * 4); //Tu musimy zrobiæ wszystkie obiekty :(
