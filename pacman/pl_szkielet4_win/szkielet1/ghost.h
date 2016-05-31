@@ -6,5 +6,8 @@ class ghost :
 public:
 	ghost();
 	~ghost();
+	void gotoXY(point x);
+	//enum state
+	void nextFrame();
 };
 

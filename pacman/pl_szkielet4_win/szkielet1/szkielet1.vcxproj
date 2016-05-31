@@ -159,6 +159,7 @@
     <ClCompile Include="main_file.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="pacman.cpp" />
+    <ClCompile Include="point.cpp" />
     <ClCompile Include="shaderprogram.cpp" />
     <ClCompile Include="world.cpp" />
   </ItemGroup>
@@ -170,6 +171,7 @@
     <ClInclude Include="item.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="pacman.h" />
+    <ClInclude Include="point.h" />
     <ClInclude Include="shaderprogram.h" />
     <ClInclude Include="world.h" />
   </ItemGroup>
