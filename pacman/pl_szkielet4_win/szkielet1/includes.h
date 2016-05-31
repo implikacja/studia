@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #ifndef headers
 #define headers
 #include <GL/glew.h>

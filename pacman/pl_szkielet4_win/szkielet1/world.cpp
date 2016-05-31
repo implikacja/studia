@@ -4,8 +4,9 @@
 
 world::world()
 {
+	
 	//itemList = new item[5];
-	a = new item;
+	a = new item();
 }
 
 

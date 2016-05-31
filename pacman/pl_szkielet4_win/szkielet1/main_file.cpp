@@ -27,7 +27,7 @@ int main(void)
 
 
 	config conf;
-	world w;
-	conf.mainloop(w);
+	world *w = new world();
+	conf.mainloop(*w);
 
 }
