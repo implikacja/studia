@@ -15,6 +15,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
+*.VC.db
 
 # External tool builders
 .externalToolBuilders/
@@ -214,5 +215,9 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+<<<<<<< HEAD
 *.db
 pacman/pl_szkielet4_win/szkielet1.VC.db
+=======
+*.opendb
+>>>>>>> origin/master

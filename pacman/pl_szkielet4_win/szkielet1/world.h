@@ -1,12 +1,13 @@
 #pragma once
 
 #include "includes.h"
+#include <vector>
 class item;
 class world
 {
 public:
-	//vector <item *> itemList;
-	item *itemList;
+	std::vector <item *> itemList;
+	//item *itemList;
 	item *a;
 	world();
 	~world();	

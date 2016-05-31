@@ -4,9 +4,13 @@
 
 world::world()
 {
+<<<<<<< HEAD
+	
+=======
 	printf("Konstruktor world/n");
+>>>>>>> origin/master
 	//itemList = new item[5];
-	a = new item;
+	a = new item();
 }
 
 
