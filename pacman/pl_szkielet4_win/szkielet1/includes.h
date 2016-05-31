@@ -13,8 +13,10 @@
 #include "config.h"
 #include "world.h"
 #include "item.h"
+#include "map.h"
 #include <vector>
 #include <iostream>
+#include <fstream>
 using namespace glm;
 using namespace std;
 #endif // !headers
