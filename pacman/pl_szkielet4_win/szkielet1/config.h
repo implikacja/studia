@@ -27,6 +27,7 @@ public:
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	void mainloop(world w);
 
-	bool loadObj(const char * path, std::vector < glm::vec3 > & out_vertices, std::vector < glm::vec3 > & out_normals);
+	bool loadObj(const char * path, std::vector < glm::vec4 > & out_vertices, std::vector < glm::vec4 > & out_normals);
+	bool loadObj(const char * path, float *& out_vertices, float *& out_normals, int* indeks);
 };
 

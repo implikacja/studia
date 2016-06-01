@@ -25,10 +25,11 @@ void world::drawScene(GLFWwindow* window, GLuint vao, ShaderProgram *shaderProgr
 		glm::vec3(0.0f, 0.0f, 5.0f),
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
-
+	//printf("Za chwilê coœ narysujê...\n");
 	//Narysuj obiekt
 	a->drawObject(vao, shaderProgram, P, V);
 	//Przerzuæ tylny bufor na przedni
+	//printf("Narysowa³em!\n");
 	glfwSwapBuffers(window);
 
 }
