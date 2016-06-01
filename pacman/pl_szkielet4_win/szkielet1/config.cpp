@@ -5,7 +5,7 @@
 config::config()
 {
 
-	mode3d = true;
+	mode3d = false;
 
 	glfwSetErrorCallback(config::error_callback);//Zarejestruj procedurê obs³ugi b³êdów
 
@@ -52,6 +52,7 @@ config::config()
 	};*/
 
 	bufVertices[0] = makeBuffer(c.vertices, c.vertexCount, sizeof(float) * 4); //Tu musimy zrobiæ wszystkie obiekty :(
+	bufVertices2d[0] = makeBuffer(c.vertices, c.vertexCount, sizeof(float) * 4); //Tu musimy zrobiæ wszystkie obiekty :(
 
 																		//Zbuduj VAO wi¹¿¹cy atrybuty z konkretnymi VBO
 	glGenVertexArrays(5, vao); //Wygeneruj uchwyt na VAO i zapisz go do zmiennej globalnej
@@ -145,7 +146,7 @@ void config::mainloop(world w)
 		}
 		else
 		{
-
+			w.drawScene2d(window, vao2d[0], shaderProgram); //Wykonaj procedurê rysuj¹c¹
 		}
 
 
