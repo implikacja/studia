@@ -22,7 +22,7 @@ void world::drawScene(GLFWwindow* window, GLuint vao, ShaderProgram *shaderProgr
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
 
 		V = glm::lookAt( //Wylicz macierz widoku
-		glm::vec3(0.0f, 0.0f, -5.0f),
+		glm::vec3(0.0f, 0.0f, 5.0f),
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -39,7 +39,7 @@ void world::drawScene2d(GLFWwindow* window, GLuint vao2d, ShaderProgram *shaderP
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
 
 	glm::mat4 V = glm::lookAt( //Wylicz macierz widoku
-		glm::vec3(0.0f, 0.0f, -5.0f),
+		glm::vec3(0.0f, 0.0f, 5.0f),
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 

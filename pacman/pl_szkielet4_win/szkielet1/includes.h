@@ -14,6 +14,7 @@
 #include "world.h"
 #include "item.h"
 #include "map.h"
+#include "models.h"
 #include <vector>
 #include <iostream>
 #include <fstream>

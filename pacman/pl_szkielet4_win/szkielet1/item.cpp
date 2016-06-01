@@ -24,9 +24,8 @@ void item::drawObject(GLuint vao, ShaderProgram *shaderProgram, mat4 mP, mat4 mV
 
 	//Uaktywnienie VAO i tym samym uaktywnienie predefiniowanych w tym VAO powi¹zañ slotów atrybutów z tablicami z danymi
 	glBindVertexArray(vao);
-
 	//Narysowanie obiektu
-	glDrawArrays(GL_TRIANGLES, 0, 3);//ostatnie to liczba wierzcho³ków
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);//ostatnie to liczba wierzcho³ków
 
 	//Posprz¹tanie po sobie (niekonieczne w sumie je¿eli korzystamy z VAO dla ka¿dego rysowanego obiektu)
 	glBindVertexArray(0);

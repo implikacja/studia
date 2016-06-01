@@ -5,7 +5,7 @@
 config::config()
 {
 
-	mode3d = false;
+	mode3d = true;
 
 	glfwSetErrorCallback(config::error_callback);//Zarejestruj procedurê obs³ugi b³êdów
 
@@ -39,18 +39,19 @@ config::config()
 
 
 	shaderProgram = new ShaderProgram("vshader.txt", NULL, "fshader.txt"); //Wczytaj program cieniuj¹cy 
+	cube c;
 
 
 																		   //*****Przygotowanie do rysowania pojedynczego obiektu*******
 																		//Zbuduj VBO z danymi obiektu do narysowania
 	//Trojkat na razie tak oszukujê
-	float vertices[] = {
+	/*float vertices[] = {
 		-0.5f, -0.5f, 0.0f, 1.0f,
 		0.5f, -0.5f, 0.0f, 1.0f,
 		0.0f,  0.5f, 0.0f, 1.0f,
-	};
+	};*/
 
-	bufVertices[0] = makeBuffer(vertices, 3, sizeof(float) * 4); //Tu musimy zrobiæ wszystkie obiekty :(
+	bufVertices[0] = makeBuffer(c.vertices, c.vertexCount, sizeof(float) * 4); //Tu musimy zrobiæ wszystkie obiekty :(
 
 																		//Zbuduj VAO wi¹¿¹cy atrybuty z konkretnymi VBO
 	glGenVertexArrays(5, vao); //Wygeneruj uchwyt na VAO i zapisz go do zmiennej globalnej

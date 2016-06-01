@@ -1,8 +1,14 @@
 #pragma once
-class models
+
+class cube
 {
 public:
-	models();
-	~models();
+	int vertexCount;
+
+
+		 cube();
+		~cube();
+		float *vertices;
+		float *colors;
 };
 
