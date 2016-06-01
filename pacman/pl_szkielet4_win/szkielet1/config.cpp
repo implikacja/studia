@@ -5,7 +5,8 @@
 config::config()
 {
 
-	mode3d = true;
+	mode3d = false;
+	w = new world();
 
 	glfwSetErrorCallback(config::error_callback);//Zarejestruj procedurê obs³ugi b³êdów
 
@@ -36,20 +37,9 @@ config::config()
 	glClearColor(0, 0, 0, 1); //Czyœæ ekran na czarno	
 	glEnable(GL_DEPTH_TEST); //W³¹cz u¿ywanie Z-Bufora
 	glfwSetKeyCallback(window, config::key_callback); //Zarejestruj procedurê obs³ugi klawiatury
-
-
 	shaderProgram = new ShaderProgram("vshader.txt", NULL, "fshader.txt"); //Wczytaj program cieniuj¹cy 
 	cube c;
 
-
-																		   //*****Przygotowanie do rysowania pojedynczego obiektu*******
-																		//Zbuduj VBO z danymi obiektu do narysowania
-	//Trojkat na razie tak oszukujê
-	/*float vertices[] = {
-		-0.5f, -0.5f, 0.0f, 1.0f,
-		0.5f, -0.5f, 0.0f, 1.0f,
-		0.0f,  0.5f, 0.0f, 1.0f,
-	};*/
 
 	//bufVertices[0] = makeBuffer(c.vertices, c.vertexCount, sizeof(float) * 4); //Tu musimy zrobiæ wszystkie obiekty :(
 	bufVertices2d[0] = makeBuffer(c.vertices, c.vertexCount, sizeof(float) * 4); //Tu musimy zrobiæ wszystkie obiekty :(
@@ -76,8 +66,6 @@ config::config()
 
 						  //******Koniec przygotowania obiektu************
 
-	//std::vector< glm::vec4 > vertices;
-	//std::vector< glm::vec4 > normals; // Won't be used at the moment.
 	float* vertices = NULL;
 	float* normals = NULL;
 	int indeks;
@@ -85,7 +73,7 @@ config::config()
 
 	if (res)
 	{
-		for (int i = 0; i < indeks; i++)
+		/*for (int i = 0; i < indeks; i++)
 		{
 			printf("Wierzcholek %d: %f\t%f\t%f\t%f\n", i, vertices[i*4], vertices[i*4+1], vertices[i*4+2], vertices[i*4+3]);
 		}
@@ -96,7 +84,7 @@ config::config()
 		}
 
 
-		printf("Rozmiar %d", indeks);
+		printf("Rozmiar %d", indeks);*/
 		bufVertices[0] = makeBuffer(vertices, indeks, sizeof(float));
 
 
@@ -111,6 +99,12 @@ config::config()
 
 }
 
+config::config(bool m)
+{
+	if (m) mode3d = true;
+	else mode3d = false;
+
+}
 
 config::~config()
 {
@@ -167,18 +161,18 @@ void config::key_callback(GLFWwindow* window, int key,int scancode, int action, 
 	}
 }
 
-void config::mainloop(world w)
+void config::mainloop()
 {
 	//G³ówna pêtla
 	while (!glfwWindowShouldClose(window)) //Tak d³ugo jak okno nie powinno zostaæ zamkniête
 	{
 		if (mode3d)
 		{
-			w.drawScene(window, vao[0], shaderProgram); //Wykonaj procedurê rysuj¹c¹
+			w->drawScene(window, vao[0], shaderProgram); //Wykonaj procedurê rysuj¹c¹
 		}
 		else
 		{
-			w.drawScene2d(window, vao2d[0], shaderProgram); //Wykonaj procedurê rysuj¹c¹
+			w->drawScene2d(window, vao2d[0], shaderProgram); //Wykonaj procedurê rysuj¹c¹
 		}
 
 

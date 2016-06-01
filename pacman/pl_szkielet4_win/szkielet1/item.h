@@ -7,10 +7,12 @@ class item
 {
 public:
 	point pos;
-	glm::mat4 mM;
+	glm::mat4 M;
+	int vertexCount;
+	int nrVao;
 
 	item();
 	~item();
-	void drawObject(GLuint vao, ShaderProgram *shaderProgram, mat4 mP, mat4 mV);
+
 };
 
