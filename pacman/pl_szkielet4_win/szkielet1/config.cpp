@@ -5,6 +5,8 @@
 config::config()
 {
 
+	mode3d = false;
+
 	glfwSetErrorCallback(config::error_callback);//Zarejestruj procedurê obs³ugi b³êdów
 
 	if (!glfwInit()) { //Zainicjuj bibliotekê GLFW
@@ -136,7 +138,16 @@ void config::mainloop(world w)
 	//G³ówna pêtla
 	while (!glfwWindowShouldClose(window)) //Tak d³ugo jak okno nie powinno zostaæ zamkniête
 	{
-		w.drawScene(window, vao[0], shaderProgram); //Wykonaj procedurê rysuj¹c¹
+		if (mode3d)
+		{
+			w.drawScene(window, vao[0], shaderProgram); //Wykonaj procedurê rysuj¹c¹
+		}
+		else
+		{
+
+		}
+
+
 		glfwPollEvents(); //Wykonaj procedury callback w zaleznoœci od zdarzeñ jakie zasz³y.
 	}
 }

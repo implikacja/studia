@@ -5,6 +5,7 @@ class world;
 class config
 {
 public:
+	bool mode3d;
 	//Uchwyty na VAO i bufory wierzcho³ków
 	GLuint vao[5];
 	GLuint vao2d[7];
