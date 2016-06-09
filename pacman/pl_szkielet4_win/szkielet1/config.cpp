@@ -15,7 +15,7 @@ config::config()
 		exit(EXIT_FAILURE);
 	}
 
-	window = glfwCreateWindow(500, 500, "OpenGL", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL. 
+	window = glfwCreateWindow(800, 800, "Pacman", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL. 
 
 	if (!window) //Je¿eli okna nie uda³o siê utworzyæ, to zamknij program
 	{
@@ -43,10 +43,9 @@ config::config()
 
 						  //******Koniec przygotowania obiektu************
 
-	
+	//scale = 2.0f/w2d->cMap->h;
 	
 }
-
 
 config::~config()
 {

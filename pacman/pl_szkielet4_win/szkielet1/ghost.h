@@ -8,6 +8,6 @@ public:
 	~ghost();
 	void gotoXY(point x);
 	//enum state
-	void nextFrame();
+	//void nextFrame();
 };
 

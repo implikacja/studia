@@ -19,7 +19,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 #define GLM_FORCE_RADIANS
 
-#include "includes.h"
+#include "config.h"
 
 
 int main(void)

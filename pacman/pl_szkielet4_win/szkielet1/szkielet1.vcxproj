@@ -169,7 +169,6 @@
     <ClInclude Include="constants.h" />
     <ClInclude Include="enums.h" />
     <ClInclude Include="ghost.h" />
-    <ClInclude Include="includes.h" />
     <ClInclude Include="item.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="models.h" />

@@ -1,6 +1,13 @@
 #pragma once
-#include "includes.h"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <stdlib.h>
+#include <stdio.h>
 #include <vector>
+#include "world.h"
 
 class world;
 class config
@@ -24,10 +31,7 @@ public:
 	world *w2d;
 	world *w3d;
 	GLFWwindow* window; 
-
-
-
-
+	//static float scale;
 	static void error_callback(int error, const char* description);
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	void mainloop();

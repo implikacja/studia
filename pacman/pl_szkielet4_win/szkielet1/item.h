@@ -1,7 +1,16 @@
-#pragma once
+#ifndef ITEM_H
+#define ITEM_H
 
-#include "includes.h"
+
 #include "point.h"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <stdlib.h>
+#include <stdio.h>
+
 using namespace glm;
 class item
 {
@@ -10,11 +19,13 @@ public:
 	point pos;
 	glm::mat4 M;
 	int vertexCount;
-	int nrVao;
 
 	item();
 	item(int vertex);
-	~item();
+	virtual ~item();
+	virtual void nextFrame() ;
 
 };
+
+#endif
 

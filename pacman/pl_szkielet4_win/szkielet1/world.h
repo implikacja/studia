@@ -1,6 +1,18 @@
 #pragma once
 
-#include "includes.h"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <stdlib.h>
+#include <stdio.h>
+#include "shaderprogram.h"
+#include "pacman.h"
+#include "models.h"
+#include "map.h"
+#include "config.h"
+#include "constants.h"
 #include <vector>
 using namespace glm;
 class item;
@@ -28,6 +40,7 @@ public:
 	void assignVBOtoAttribute(ShaderProgram *shaderProgram, char* attributeName, GLuint bufVBO, int vertexSize);
 	void drawScene(GLFWwindow* window);
 	void drawObject(GLuint vao, mat4 M, int vertexCount);
+	void drawMap2d(GLFWwindow* window, mat4 V);
 
 };
 

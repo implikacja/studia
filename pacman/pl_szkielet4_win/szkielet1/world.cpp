@@ -13,36 +13,76 @@ world::world(bool mode)
 	shaderProgram = NULL;
 	shaderProgram = new ShaderProgram("vshader.txt", NULL, "fshader.txt"); //Wczytaj program cieniuj¹cy 
 	cMap = new map();
-	wall = new item(36);
+
 	P = glm::perspective(50 * PI / 180, 1.0f, 1.0f, 50.0f); //Wylicz macierz rzutowania
-	/*cube c;
-	bufVertices = makeBuffer(c.vertices, c.vertexCount, sizeof(float)*4);
-	glBindVertexArray(wall->vao); //Uaktywnij nowo utworzony VAO
-	assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
-	assignVBOtoAttribute(shaderProgram, "color", bufColors, 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
-	assignVBOtoAttribute(shaderProgram, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
-	glBindVertexArray(0); //Dezaktywuj VAO*/
-
-
-	float* vertices = NULL;
-	float* normals = NULL;
-	int indeks;
-	bool res = config::loadObj("cube.txt", vertices, normals, &indeks);
-
-	if (res)
+	if (!mode3d)
 	{
-
-		bufVertices = makeBuffer(vertices, indeks, sizeof(float) *4);
-
-
+		cube c;
+		wall = new item(c.vertexCount);
+		bufVertices = makeBuffer(c.vertices, c.vertexCount, sizeof(float) * 4);
+		bufColors = makeBuffer(c.colors, c.vertexCount, sizeof(float) * 4);
+		float colors[] = {
+			0.0f, 0.0f, 1.0f, 1.0f,
+			1.0f, 0.0f, 0.0f, 1.0f,
+			0.0f, 1.0f, 0.0f, 1.0f,
+			0.0f, 0.0f, 1.0f, 1.0f,
+			0.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 0.0f, 0.0f, 1.0f,
+		};
 		glBindVertexArray(wall->vao); //Uaktywnij nowo utworzony VAO
 		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
-		assignVBOtoAttribute(shaderProgram, "color", bufVertices, 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
-		assignVBOtoAttribute(shaderProgram, "normal", bufVertices, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
-		glBindVertexArray(0);
-		printf("Stworzono buffor3d\n");
+		assignVBOtoAttribute(shaderProgram, "color", bufColors, 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
+		assignVBOtoAttribute(shaderProgram, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
+		glBindVertexArray(0); //Dezaktywuj VAO
+		for (int i = 0; i < cMap->h; i++)
+		{
+			for (int j = 0; j < cMap->h; j++)
+			{
+				if (cMap->m[j][i] == 'p')
+				{
+					pacman *p = new pacman(6);
+					float scale = 2.0f / cMap->h;
+					p->pos.x = (j*scale + scale / 2)-1;
+					p->pos.y = (i*scale + scale / 2) - 1;
+					itemList.push_back(p);
+
+				}
+			}
+		}
+		
+		bufColors = makeBuffer(colors, c.vertexCount, sizeof(float) * 4);
+	glBindVertexArray(itemList[0]->vao);
+		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
+		assignVBOtoAttribute(shaderProgram, "color", bufColors, 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
+		assignVBOtoAttribute(shaderProgram, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
+		glBindVertexArray(0); //Dezaktywuj VAO
 
 	}
+
+	else
+	{
+		float* vertices = NULL;
+		float* normals = NULL;
+		int indeks;
+		bool res = config::loadObj("cube.txt", vertices, normals, &indeks);
+		wall = new item(indeks);
+		if (res)
+		{
+
+			bufVertices = makeBuffer(vertices, indeks, sizeof(float) * 4);
+
+
+			glBindVertexArray(wall->vao); //Uaktywnij nowo utworzony VAO
+			assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
+			assignVBOtoAttribute(shaderProgram, "color", bufVertices, 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
+			assignVBOtoAttribute(shaderProgram, "normal", bufVertices, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
+			glBindVertexArray(0);
+			printf("Stworzono buffor3d\n");
+
+		}
+	}
+
+
 }
 
 world::~world()
@@ -59,13 +99,14 @@ void world::drawScene(GLFWwindow* window) {
 	//************Tutaj umieszczaj kod rysuj¹cy obraz******************l
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
-
+//	itemList[0]->nextFrame();
 		V = glm::lookAt( //Wylicz macierz widoku
-		glm::vec3(0.0f, 0.0f, 5.0f),
+		glm::vec3(0.0f, 0.0f, 3.0f),
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
+		if(!mode3d)drawMap2d(window, V);
 
-		drawObject(wall->vao, wall->M, wall->vertexCount);
+		drawObject(itemList[0]->vao, itemList[0]->M, itemList[0]->vertexCount);
 	glfwSwapBuffers(window);
 
 }
@@ -82,14 +123,40 @@ void world::drawObject(GLuint vao, mat4 M, int vertexCount) {
 	//Uaktywnienie VAO i tym samym uaktywnienie predefiniowanych w tym VAO powi¹zañ slotów atrybutów z tablicami z danymi
 	glBindVertexArray(vao);
 
-	//Narysowanie obiektu
-	//printf ("%d", vao);
-	//printf("Przed glDrawArrays\n");
-	glDrawArrays(GL_TRIANGLES, 0, vertexCount);//ostatnie to liczba wierzcho³ków
-									  //printf("Po glDrawArrays\n");
+
+	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 
 									  //Posprz¹tanie po sobie (niekonieczne w sumie je¿eli korzystamy z VAO dla ka¿dego rysowanego obiektu)
 	glBindVertexArray(0);
+}
+void world::drawMap2d(GLFWwindow* window, mat4 V)
+{
+	float scale = 2.0f / cMap->h;
+	float scalex = -1.0f;
+	float scaley = 1.0f - scale;
+	for (int i = 0; i < cMap->h; i++)
+	{
+		for (int j = 0; j < cMap->w; j++)
+		{
+			if (cMap->m[j][i] == 'w')
+			{
+				if (scalex >= 1.0-scale/2)scalex = -1.0f;
+				glm::mat4 M = glm::mat4(1.0f);
+				M = glm::scale(M, vec3(scale, scale, 0.0f));
+				M = glm::translate(M, vec3(scalex/ scale, scaley / scale, 0.0f));
+				drawObject(wall->vao, M, wall->vertexCount);
+
+			}
+	
+		scalex				+= scale;
+			
+		}
+		scaley -= scale;
+	}
+
+	
+
+
 }
 
 //Tworzy bufor VBO z tablicy
