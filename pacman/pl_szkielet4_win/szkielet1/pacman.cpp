@@ -8,12 +8,30 @@ pacman::pacman()
 
 }
 
-pacman::pacman(int vertex)
+pacman::pacman(int vertex, map *cMap)
 {
-	pos.x = 0;
-	pos.y = 0;
+	pos.x = -cMap->h / 2;
+	pos.y = cMap->h / 2;
+	bool flag = 0;
+	for (int i = 0; i < cMap->h; i++)
+	{
+		for (int j = 0; j < cMap->h; j++)
+		{
+			if (pos.x >= cMap->h / 2)pos.x = -cMap->h / 2;
+			if (cMap->m[j][i] == 'p')
+			{
+				flag = 1;
+				break;
+			}
+
+			pos.x++;
+		}
+		if (flag) break;
+		pos.y--;
+	}
 	pos.z = 0;
 	vertexCount = vertex;
+	M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
 }
 
 pacman::~pacman()

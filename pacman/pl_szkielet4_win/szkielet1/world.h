@@ -32,6 +32,9 @@ public:
 	GLuint bufVertices;
 	GLuint bufColors;
 	GLuint bufNormals;
+	glm::vec3 cameraPos;
+	glm::vec3 cameraTarget;
+	glm::vec3 cameraUp;
 
 	world();
 	world(bool mode);
