@@ -19,11 +19,16 @@ public:
 	point pos;
 	glm::mat4 M;
 	int vertexCount;
+	float speed;
+	float width;
+	float height;
 
 	item();
-	item(int vertex);
+	item(int vertex, float w, float h);
 	virtual ~item();
 	virtual void nextFrame() ;
+	virtual void changePosition();
+	bool collisionCheck();
 
 };
 

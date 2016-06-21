@@ -3,6 +3,7 @@
 
 #include "item.h"
 #include "map.h"
+#include "config.h"
 
 class pacman :
 	public item
@@ -11,7 +12,7 @@ public:
 	pacman();
 	pacman(int vertex, map *cMap);
 	~pacman();
-	void changePosition(char c);
+	void changePosition();
 	void nextFrame();
 };
 

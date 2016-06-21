@@ -22,7 +22,7 @@ world::world(bool mode)
 	if (!mode3d)
 	{
 		cube c;
-		wall = new item(c.vertexCount);
+		wall = new item(c.vertexCount,1,1);
 		bufVertices = makeBuffer(c.vertices, c.vertexCount, sizeof(float) * 4);
 		bufColors = makeBuffer(c.colors, c.vertexCount, sizeof(float) * 4);
 		float colors[] = {
@@ -31,7 +31,7 @@ world::world(bool mode)
 			0.0f, 0.0f, 1.0f, 1.0f,
 			0.0f, 0.0f, 1.0f, 1.0f,
 			0.0f, 0.0f, 1.0f, 1.0f,
-			0.0f, 0.0f, 1.0f, 1.0f,
+			1.0f, 0.0f, 1.0f, 1.0f,
 		};
 		glBindVertexArray(wall->vao); //Uaktywnij nowo utworzony VAO
 		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
@@ -56,7 +56,7 @@ world::world(bool mode)
 		float* normals = NULL;
 		int indeks;
 		bool res = config::loadObj("cube.txt", vertices, normals, &indeks);
-		wall = new item(indeks);
+		wall = new item(indeks,1,1);
 		if (res)
 		{
 
@@ -90,7 +90,7 @@ void world::drawScene(GLFWwindow* window) {
 	//************Tutaj umieszczaj kod rysuj¹cy obraz******************l
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
-//	itemList[0]->nextFrame();
+	itemList[0]->changePosition();
 		V = glm::lookAt( cameraPos, cameraTarget,cameraUp);
 		if(!mode3d)drawMap2d(window, V);
 
@@ -120,8 +120,8 @@ void world::drawObject(GLuint vao, mat4 M, int vertexCount) {
 void world::drawMap2d(GLFWwindow* window, mat4 V)
 {
 	cameraPos = glm::vec3(0.0f, 0.0f, cMap->h+4.0f);
-	float scalex = -cMap->h/2;
-	float scaley = cMap->h/2;
+	float scalex = float(-cMap->h/2);
+	float scaley = float(cMap->h/2);
 
 	for (int i = 0; i < cMap->h; i++)
 	{
@@ -129,17 +129,17 @@ void world::drawMap2d(GLFWwindow* window, mat4 V)
 		{
 			if (cMap->m[j][i] == 'w')
 			{
-				if (scalex >= cMap->h/2 )scalex = -cMap->h/2;
+				if (scalex >= float(cMap->h/2) )scalex = float(-cMap->h/2);
 				glm::mat4 M = glm::mat4(1.0f);
 				M = glm::translate(M, vec3(scalex , scaley, 0.0f));
 				drawObject(wall->vao, M, wall->vertexCount);
 
 			}
 	
-		scalex	+= 1;
+		scalex	+= wall->width;
 			
 		}
-		scaley -= 1;
+		scaley -= wall->height;
 	}
 
 	

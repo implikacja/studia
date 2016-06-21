@@ -2,7 +2,7 @@
 
 config* config::instance=NULL;
 bool config::instanceFlag = false;
-
+char config::c = NULL;
 config::config()
 {
 	mode3d = false;
@@ -68,14 +68,21 @@ void config::error_callback(int error, const char* description) {
 //Procedura obs³ugi klawiatury
 void config::key_callback(GLFWwindow* window, int key,int scancode, int action, int mods) {
 	if (action == GLFW_PRESS) {
-
+		if (key == GLFW_KEY_LEFT) config::c = 'l';
+		if (key == GLFW_KEY_RIGHT) config::c = 'r';
+		if (key == GLFW_KEY_UP) config::c = 'u';
+		if (key == GLFW_KEY_DOWN) config::c = 'd';
 	}
 
 
 	if (action == GLFW_RELEASE) {
-
+		//if (key == GLFW_KEY_LEFT) //speed_y = 0;
+		//if (key == GLFW_KEY_RIGHT) //speed_y = 0;
+		//if (key == GLFW_KEY_UP)
+		//if (key == GLFW_KEY_DOWN) //speed_x = 0;
 	}
 }
+
 
 void config::mainloop()
 {

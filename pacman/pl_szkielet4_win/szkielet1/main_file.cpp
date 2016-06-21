@@ -28,6 +28,7 @@ int main(void)
 
 	config *conf;
 	conf = config::getInstance();
+
 	conf->mainloop();
 	
 
