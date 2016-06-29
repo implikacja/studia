@@ -3,6 +3,8 @@
 config* config::instance=NULL;
 bool config::instanceFlag = false;
 char config::c = NULL;
+float config::width = 1.0f;
+int config::end = 0;
 config::config()
 {
 	mode3d = false;

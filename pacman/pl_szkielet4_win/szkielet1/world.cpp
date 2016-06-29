@@ -9,6 +9,7 @@ world::world()
 
 world::world(bool mode)
 {
+	timer = 0;
 	mode3d = mode;
 	shaderProgram = NULL;
 	shaderProgram = new ShaderProgram("vshader.txt", NULL, "fshader.txt"); //Wczytaj program cieniuj¹cy 
@@ -18,11 +19,21 @@ world::world(bool mode)
 	cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 	cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	coins = 0;
+	hp = 3;
+	for (int i = 0; i < cMap->h; i++)
+	{
+		for (int j = 0; j < cMap->h; j++)
+		{
+			if (cMap->m[j][i] == 'm') coins++;
 
+		}
+	}
 	if (!mode3d)
 	{
 		cube c;
 		wall = new item(c.vertexCount,1,1);
+		coin = new item(c.vertexCount, 1, 1);
 		bufVertices = makeBuffer(c.vertices, c.vertexCount, sizeof(float) * 4);
 		bufColors = makeBuffer(c.colors, c.vertexCount, sizeof(float) * 4);
 		float colors[] = {
@@ -33,11 +44,27 @@ world::world(bool mode)
 			0.0f, 0.0f, 1.0f, 1.0f,
 			1.0f, 0.0f, 1.0f, 1.0f,
 		};
+		float colors2[] = {
+			1.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 1.0f, 0.0f, 1.0f,
+		};
 		glBindVertexArray(wall->vao); //Uaktywnij nowo utworzony VAO
 		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
 		assignVBOtoAttribute(shaderProgram, "color", bufColors, 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
 		assignVBOtoAttribute(shaderProgram, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
 		glBindVertexArray(0); //Dezaktywuj VAO
+
+		bufColors = makeBuffer(colors2, c.vertexCount, sizeof(float) * 4);
+		glBindVertexArray(coin->vao); //Uaktywnij nowo utworzony VAO
+		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
+		assignVBOtoAttribute(shaderProgram, "color", bufColors, 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
+		assignVBOtoAttribute(shaderProgram, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
+		glBindVertexArray(0);
+
 		pacman *p = new pacman(6,cMap);
 		itemList.push_back(p);
 
@@ -90,7 +117,12 @@ void world::drawScene(GLFWwindow* window) {
 	//************Tutaj umieszczaj kod rysuj¹cy obraz******************l
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
-	itemList[0]->changePosition();
+	timer++;
+	if (timer == 20)
+	{
+		itemList[0]->changePosition(cMap,coins);
+		timer = 0;
+	}
 		V = glm::lookAt( cameraPos, cameraTarget,cameraUp);
 		if(!mode3d)drawMap2d(window, V);
 
@@ -119,6 +151,7 @@ void world::drawObject(GLuint vao, mat4 M, int vertexCount) {
 }
 void world::drawMap2d(GLFWwindow* window, mat4 V)
 {
+	//cMap->bottom=
 	cameraPos = glm::vec3(0.0f, 0.0f, cMap->h+4.0f);
 	float scalex = float(-cMap->h/2);
 	float scaley = float(cMap->h/2);
@@ -135,14 +168,23 @@ void world::drawMap2d(GLFWwindow* window, mat4 V)
 				drawObject(wall->vao, M, wall->vertexCount);
 
 			}
+			if (cMap->m[j][i] == 'm')
+			{
+				if (scalex >= float(cMap->h / 2))scalex = float(-cMap->h / 2);
+				glm::mat4 M = glm::mat4(1.0f);
+				M = glm::translate(M, vec3(scalex, scaley, 0.0f));
+				drawObject(coin->vao, M, coin->vertexCount);
+
+			}
 	
-		scalex	+= wall->width;
+		scalex	+= config::width;
 			
 		}
-		scaley -= wall->height;
+		scaley -= config::width;
 	}
 
 	
+
 
 
 }

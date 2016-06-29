@@ -26,8 +26,11 @@ public:
 	item *floor;
 	item *coin;
 	map* cMap;
+	int coins;
+	int hp;
 	glm::mat4 P;
 	glm::mat4 V;
+	int timer;
     ShaderProgram *shaderProgram; //Wskaünik na obiekt reprezentujπcy program cieniujπcy.
 	GLuint bufVertices;
 	GLuint bufColors;

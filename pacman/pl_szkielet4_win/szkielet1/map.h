@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MAP_H
+#define MAP_H
 #include <fstream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -16,3 +17,4 @@ public:
 	map();
 };
 
+#endif

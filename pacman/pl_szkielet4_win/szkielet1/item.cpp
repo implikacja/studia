@@ -4,7 +4,6 @@ item::item()
 {
 	M = glm::mat4(1.0f);
 	glGenVertexArrays(1, &vao);
-	speed = 0.01;
 	width = 1;
 	height = 1;
 }
@@ -16,7 +15,6 @@ item::item(int vertex, float w, float h)
 	width = w;
 	height = h;
 	vertexCount = vertex;
-	speed = 0.01;
 
 }
 
@@ -30,14 +28,14 @@ void item::nextFrame()
 {
 }
 
-void item::changePosition()
+void item::changePosition(map *cMap, int c)
 {
 
 }
 
-bool item::collisionCheck()
+bool item::collisionCheck(map *cMap)
 {
-	//if(pos.x<)
+
 }
 
 

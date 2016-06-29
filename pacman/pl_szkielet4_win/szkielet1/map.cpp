@@ -30,6 +30,9 @@ map::map()
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
+
+
+
 }
 
 map::~map()
