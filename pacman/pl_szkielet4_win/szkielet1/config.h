@@ -40,6 +40,8 @@ public:
 	void mainloop();
 	static bool loadObj(const char * path, std::vector < glm::vec4 > & out_vertices, std::vector < glm::vec4 > & out_normals);
 	static bool loadObj(const char * path, float *& out_vertices, float *& out_normals, int* indeks);
+	static bool loadObj(const char * path, float *& out_vertices, float*& out_uvs, float *& out_normals, int* indeks);
+	static GLuint loadTexture(const char* path);
 };
 
 #endif

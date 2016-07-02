@@ -156,6 +156,7 @@
     <ClCompile Include="config.cpp" />
     <ClCompile Include="ghost.cpp" />
     <ClCompile Include="item.cpp" />
+    <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="main_file.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="models.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="enums.h" />
     <ClInclude Include="ghost.h" />
     <ClInclude Include="item.h" />
+    <ClInclude Include="lodepng.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="models.h" />
     <ClInclude Include="pacman.h" />

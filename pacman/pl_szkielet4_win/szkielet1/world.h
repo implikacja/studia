@@ -35,18 +35,23 @@ public:
 	GLuint bufVertices;
 	GLuint bufColors;
 	GLuint bufNormals;
+	GLuint bufUvs;
 	glm::vec3 cameraPos;
 	glm::vec3 cameraTarget;
 	glm::vec3 cameraUp;
+	float distance; //definiuje oddalenie kamery od pacmana w osi y i z
 
 	world();
 	world(bool mode);
 	~world();	
 	GLuint makeBuffer(void *data, int vertexCount, int vertexSize);
 	void assignVBOtoAttribute(ShaderProgram *shaderProgram, char* attributeName, GLuint bufVBO, int vertexSize);
+	void createVAO(item* i, float* vertices, float* uvs, float* normals, int indeks);
 	void drawScene(GLFWwindow* window);
 	void drawObject(GLuint vao, mat4 M, int vertexCount);
+	void drawObject(GLuint vao, GLuint tex, mat4 M, int vertexCount);
 	void drawMap2d(GLFWwindow* window, mat4 V);
-
+	void drawMap3d(GLFWwindow* window, mat4 V);
+	void changeCamera();
 };
 

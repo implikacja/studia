@@ -1,4 +1,5 @@
 #include "config.h"
+#include "lodepng.h"
 
 config* config::instance=NULL;
 bool config::instanceFlag = false;
@@ -7,8 +8,8 @@ float config::width = 1.0f;
 int config::end = 0;
 config::config()
 {
-	mode3d = false;
-
+	//mode3d = false;
+	mode3d = true;
 
 	glfwSetErrorCallback(config::error_callback);//Zarejestruj procedurê obs³ugi b³êdów
 
@@ -270,4 +271,135 @@ bool config::loadObj(const char * path, float*& out_vertices, float*& out_normal
 
 	return true;
 
+}
+
+bool config::loadObj(const char * path, float *& out_vertices, float*& out_uvs, float *& out_normals, int* indeks)
+{
+	std::vector<unsigned int> vertexIndices, normalIndices, uvIndices;
+	std::vector<glm::vec4> temp_vertices;
+	std::vector<glm::vec4> temp_normals;
+	std::vector<glm::vec2> temp_uvs;
+
+	FILE * file = fopen(path, "r");
+	if (file == NULL) {
+		printf("Nie po¿na otworzyæ pliku %s!\n", path);
+		return false;
+	}
+
+	while (1)
+	{
+
+		char lineHeader[128];
+		int res = fscanf(file, "%s", lineHeader);
+		if (res == EOF) break;
+
+		if (strcmp(lineHeader, "v") == 0)
+		{
+			glm::vec4 vertex;
+			fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+			vertex.w = 1.0;
+			temp_vertices.push_back(vertex);
+		}
+		else if (strcmp(lineHeader, "vt") == 0)
+		{
+			glm::vec2 uv;
+			fscanf(file, "%f %f\n", &uv.x, &uv.y);
+			temp_uvs.push_back(uv);
+		}
+		else if (strcmp(lineHeader, "vn") == 0)
+		{
+			glm::vec4 normal;
+			fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
+			normal.w = 1.0;
+			temp_normals.push_back(normal);
+		}
+		else if (strcmp(lineHeader, "f") == 0)
+		{
+			std::string vertex1, vertex2, vertex3;
+			unsigned int vertexIndex[3], normalIndex[3], uvIndex[3];
+			int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
+			if (matches != 9)
+			{
+				printf("%s: niew³aœciwy format face w pliku. Sprobuj u¿yæ innej metody loadObj\n", path);
+				return false;
+			}
+			vertexIndices.push_back(vertexIndex[0]);
+			vertexIndices.push_back(vertexIndex[1]);
+			vertexIndices.push_back(vertexIndex[2]);
+			normalIndices.push_back(normalIndex[0]);
+			normalIndices.push_back(normalIndex[1]);
+			normalIndices.push_back(normalIndex[2]);
+			uvIndices.push_back(uvIndex[0]);
+			uvIndices.push_back(uvIndex[1]);
+			uvIndices.push_back(uvIndex[2]);
+		}
+		else
+		{
+			printf("%s: niew³aœciwy format w pliku. Znaleziono symbol inny ni¿ v, vt, vn, f\n", path);
+			return false;
+		}
+
+	}
+
+	*indeks = vertexIndices.size();
+	out_vertices = new float[4 * (*indeks)];
+	out_normals = new float[4 * (*indeks)];
+	out_uvs = new float[2 * (*indeks)];
+
+
+	for (unsigned int i = 0; i < vertexIndices.size(); i++)
+	{
+		unsigned int vertexIndex = vertexIndices[i];
+		glm::vec4 vertex = temp_vertices[vertexIndex - 1]; //-1,  bo w .obj wierzcho³ki s¹ indeksowane od 1
+		out_vertices[i * 4] = vertex.x;
+		out_vertices[i * 4 + 1] = vertex.y;
+		out_vertices[i * 4 + 2] = vertex.z;
+		out_vertices[i * 4 + 3] = vertex.w;
+	}
+
+
+	for (unsigned int i = 0; i < normalIndices.size(); i++)
+	{
+		unsigned int normalIndex = normalIndices[i];
+		glm::vec4 normal = temp_normals[normalIndex - 1]; //-1,  bo w .obj wierzcho³ki s¹ indeksowane od 1
+		out_normals[i * 4] = normal.x;
+		out_normals[i * 4 + 1] = normal.y;
+		out_normals[i * 4 + 2] = normal.z;
+		out_normals[i * 4 + 3] = normal.w;
+	}
+
+	for (unsigned int i = 0; i < uvIndices.size(); i++)
+	{
+		unsigned int uvIndex = uvIndices[i];
+		glm::vec2 uv = temp_uvs[uvIndex - 1]; //-1,  bo w .obj wierzcho³ki s¹ indeksowane od 1
+		out_normals[i * 2] = uv.x;
+		out_normals[i * 2 + 1] = uv.y;
+	}
+
+	return true;
+
+}
+
+GLuint config::loadTexture(const char* path)
+{
+	GLuint tex;
+	glActiveTexture(GL_TEXTURE0);
+
+	//Wczytanie do pamiêci komputera
+	std::vector<unsigned char> image;   //Alokuj wektor do wczytania obrazka
+	unsigned width, height;   //Zmienne do których wczytamy wymiary obrazka
+	//Wczytaj obrazek
+	unsigned error = lodepng::decode(image, width, height, path);
+
+	//Import do pamiêci karty graficznej
+	glGenTextures(1, &tex); //Zainicjuj jeden uchwyt
+	glBindTexture(GL_TEXTURE_2D, tex); //Uaktywnij uchwyt
+									   //Wczytaj obrazek do pamiêci KG skojarzonej z uchwytem
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
+		GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)image.data());
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	return tex;
 }

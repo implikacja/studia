@@ -19,6 +19,8 @@ class item
 {
 public:
 	GLuint vao;
+	GLuint tex;
+
 	point pos;
 	glm::mat4 M;
 	int vertexCount;
