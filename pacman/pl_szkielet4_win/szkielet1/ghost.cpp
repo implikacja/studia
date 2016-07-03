@@ -58,6 +58,19 @@ ghost::ghost(int vertex, map *cMap, int n)
 	width = 1;
 	height = 1;
 	road.clear();
+	start.x = pos.x;
+	start.y = pos.y;
+	start.intY = pos.intY;
+	start.intX = pos.intX;
+
+	for (int i = 0; i < cMap->h; i++)
+	{
+		for (int j = 0; j < cMap->w; j++)
+		{
+			if (cMap->m[j][i] != 'w')
+				ghost::vertex.push_back(make_pair(j, i));
+		}
+	}
 }
 
 ghost::~ghost()
@@ -67,7 +80,7 @@ ghost::~ghost()
 void ghost::gotoXY(int x, int y, map *cMap)
 {
 	vector <pair<int, int>>A;
-	int nr = 0;
+	int n = 0;
 	pair <int, int> v;
 	bool flag = 0;
 	int **m = new int*[cMap->w];
@@ -83,8 +96,7 @@ void ghost::gotoXY(int x, int y, map *cMap)
 	}
 
 	A.push_back(make_pair(pos.intX, pos.intY));
-	m[pos.intX][pos.intY] = nr;
-
+	m[pos.intX][pos.intY] = n;
 	while (!A.empty())      
 	{
 		v = A.front();     
@@ -113,8 +125,8 @@ void ghost::gotoXY(int x, int y, map *cMap)
 		}
 		if (m[x][y] != 89)break;
 	}
-	int i = y;
-	int j = x;
+	int i = x;
+	int j =y;
 	while (m[i][j] != 0)
 	{
 		road.insert(road.begin(), make_pair(i, j));
@@ -123,29 +135,58 @@ void ghost::gotoXY(int x, int y, map *cMap)
 		else if (m[i][j-1] < m[i][j])j--;
 		else if (m[i][j+1] < m[i][j])j++;
 	}
-
-
 }
 
 void ghost::changePosition(map *cMap, int &c)
 {
+	if(item::dead)
+	{ }
+	srand(time(0));
 	if (nr == 1)
 	{
-		if (road.empty()) gotoXY(12, 12, cMap);
+		if (road.empty() && pos.intX == start.intX && pos.intY == start.intY)
+		{
+			gotoXY(23, 23, cMap);
+		}
+		else if (road.empty()) gotoXY(start.intX, start.intY, cMap);
 
 	}
 	else if (nr == 2)
 	{
-		if (road.empty()) gotoXY(12, 12, cMap);
+		if (road.empty())
+		{
+			int r = rand() % vertex.size();
 
+			int x = vertex[r].first;
+			int y = vertex[r].second;
+			gotoXY(x, y, cMap);
+		}
 	}
 	else if (nr == 3)
 	{
-		if (road.empty()) gotoXY(12, 12, cMap);
+		if (road.empty())
+		{
+			int r = rand() % vertex.size();
+			r = (r + rand() % 9) % vertex.size();
+
+			int x = vertex[r].first;
+			int y = vertex[r].second;
+			gotoXY(x, y, cMap);
+		}
 	}
 	else if (nr == 4)
 	{
-		if (road.empty()) gotoXY(12, 12, cMap);
+		for (int i = 0; i < cMap->h; i++)
+		{
+			for (int j = 0; j < cMap->w; j++)
+			{
+				if (cMap->m[j][i] == 'p')
+				{
+					road.clear();
+					gotoXY(j, i, cMap);
+				}
+			}
+		}
 	}
 
 	if (road[0].first < pos.intX)pos.direction = 'l';
@@ -154,20 +195,51 @@ void ghost::changePosition(map *cMap, int &c)
 	if (road[0].second < pos.intY)pos.direction = 'u';
     if(!road.empty())road.erase(road.begin());
 
+
 	switch (pos.direction)
 	{
 	case 'u':
 	{
 		pos.y += config::width;
 		pos.intY--;
+		if (cMap->m[pos.intX][pos.intY] == 'p')
+		{
+			item::dead = 1;
+			c--;
+			if (!c)
+			{
+				config::end = -1;
+				return;
+			}
+			pos.x = start.x;
+			pos.y = start.y;
+			pos.intX = start.intX;
+			pos.intY = start.intY;
+
+		}
 		M = glm::mat4(1.0f);
 		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+
 		break;
 	}
 	case 'd':
 	{
 		pos.y -= config::width;
 		pos.intY++;
+		if (cMap->m[pos.intX][pos.intY] == 'p')
+		{
+			item::dead = 1;
+			c--;
+			if (!c)
+			{
+				config::end = -1;
+				return;
+			}
+			pos.x = start.x;
+			pos.y = start.y;
+			pos.intX = start.intX;
+			pos.intY = start.intY;
+		}
 		M = glm::mat4(1.0f);
 		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
 		break;
@@ -176,6 +248,20 @@ void ghost::changePosition(map *cMap, int &c)
 	{
 		pos.x += config::width;
 		pos.intX++;
+		if (cMap->m[pos.intX][pos.intY] == 'p')
+		{
+			item::dead = 1;
+			c--;
+			if (!c)
+			{
+				config::end = -1;
+				return;
+			}
+			pos.x = start.x;
+			pos.y = start.y;
+			pos.intX = start.intX;
+			pos.intY = start.intY;
+		}
 		M = glm::mat4(1.0f);
 		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
 		break;
@@ -184,6 +270,20 @@ void ghost::changePosition(map *cMap, int &c)
 	{
 		pos.x -= config::width;
 		pos.intX--;
+		if (cMap->m[pos.intX][pos.intY] == 'p')
+		{
+			item::dead = 1;
+			c--;
+			if (!c)
+			{
+				config::end = -1;
+				return;
+			}
+			pos.x = start.x;
+			pos.y = start.y;
+			pos.intX = start.intX;
+			pos.intY = start.intY;
+		}
 		M = glm::mat4(1.0f);
 		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
 		break;

@@ -1,5 +1,6 @@
 #include "item.h"
 
+int item::dead = 0;
 item::item()
 {
 	M = glm::mat4(1.0f);
