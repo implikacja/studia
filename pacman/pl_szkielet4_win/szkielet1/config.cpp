@@ -8,8 +8,8 @@ float config::width = 1.0f;
 int config::end = 0;
 config::config()
 {
-	//mode3d = false;
-	mode3d = true;
+	mode3d = false;
+	//mode3d = true;
 
 	glfwSetErrorCallback(config::error_callback);//Zarejestruj procedurê obs³ugi b³êdów
 
