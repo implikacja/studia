@@ -3,30 +3,50 @@
 uniform sampler2D tex;
 
 out vec4 pixelColor; //Zmienna wyjsciowa fragment shadera. Zapisuje sie do niej ostateczny (prawie) kolor piksela
+
 in vec2 iuv;
+in float ishine;
+in float ialpha;
 
 in vec4 vN; //interpolowany wektor normalny w przestrzeni oka
 in vec4 vV; //interpolowany wektor do obserwatora w przestrzeni oka
-in vec4 vL; //interpolowany wektor do zrodla swiatla w przestrzeni oka
+in vec4 vL0; //interpolowany wektor do zrodla swiatla 0 w przestrzeni oka
+in vec4 vL1; //interpolowany wektor do zrodla swiatla 1 w przestrzeni oka
 
 void main(void) {
-	//vec4 mN=normalize(vN); //normalizuj interpolowany wektor normalny w przestrzeni oka
-	//vec4 mL=normalize(vL); //normalizuj interpolowany wektor do obserwatora w przestrzeni oka
-	//vec4 mV=normalize(vV); //normalizuj interpolowany wektor do zrodla swiatla w przestrzeni oka
-	//vec4 mR=reflect(-mL,mN); //oblicz wektor odbity w przestrzeni oka
+	vec4 mN=normalize(vN); //normalizuj interpolowany wektor normalny w przestrzeni oka
+	vec4 mL0=normalize(vL0); //normalizuj interpolowany wektor do obserwatora w przestrzeni oka
+	vec4 mL1=normalize(vL1); //normalizuj interpolowany wektor do obserwatora w przestrzeni oka
+	vec4 mV=normalize(vV); //normalizuj interpolowany wektor do zrodla swiatla w przestrzeni oka
+	
+	vec4 mR0=reflect(-mL0,mN); //oblicz wektor odbity w przestrzeni oka
+	vec4 mR1=reflect(-mL1,mN); //oblicz wektor odbity w przestrzeni oka
 
-	//vec4 Ma=vec4(0,0,0,1); //Kolor materialu dla swiatla otoczenia
-	//vec4 La=vec4(0,0,0,1); //Kolor swiatla otoczenia
-	//vec4 Md = texture(tex,iuv);
-	//vec4 Ld=vec4(1,1,1,1); //Kolor swiatla rozpraszanego
-	//vec4 Ms=vec4(1,1,1,1); //Kolor materialu dla swiatla odbitego
-	//vec4 Ls=vec4(1,1,1,1); //Kolor swiatla odbijanego
+	vec4 Ma=vec4(0,0,0,1); //Kolor materialu dla swiatla otoczenia
+	vec4 La=vec4(0,0,0,1); //Kolor swiatla otoczenia
+	
+	vec4 Md = texture(tex,iuv);
+	//vec4 Md = vec4(1,1,0,1);
+	
+	vec4 Ld=vec4(1,1,1,1); //Kolor swiatla rozpraszanego
+	vec4 Ms=vec4(1,1,1,1); //Kolor materialu dla swiatla odbitego
+	vec4 Ls=vec4(1,1,1,1); //Kolor swiatla odbijanego
 	//float shininess=50; //Polyskliwosc materialu
 
-	//float nl=max(0,dot(mN,mL)); //Oblicz czlon Lamberta
-	//float rv=pow(max(0,dot(mN,mL)),shininess); //Oblicz czlon Phonga
-
+	float nl0=max(0,dot(mN,mL0)); //Oblicz czlon Lamberta 0
+	float nl1=max(0,dot(mN,mL1)); //Oblicz czlon Lamberta 1
+	
+	float rv0=pow(max(0,dot(mN,mL0)),ishine); //Oblicz czlon Phonga 0
+	float rv1=pow(max(0,dot(mN,mL1)),ishine); //Oblicz czlon Phonga 1
+	
 	//pixelColor=Ma*La+Md*Ld*nl+Ms*Ls*rv; //Oblicz model oswietlenia i zwroc jako kolor piksela
 	
-	pixelColor = texture(tex,iuv);
+	vec4 pc0 = Ma*La+Md*Ld*nl0+Ms*Ls*rv0;
+	vec4 pc1 = Ma*La+Md*Ld*nl1+Ms*Ls*rv1;
+
+	pixelColor = ialpha*pc0+(1-ialpha)*pc1;
+	
+	//pixelColor = texture(tex,iuv);
+	
+	//pixelColor = vec4(1,1,0,1);
 }

@@ -6,6 +6,8 @@ item::item()
 	glGenVertexArrays(1, &vao);
 	width = 1;
 	height = 1;
+	t = 0;
+	t_max = 0;
 }
 
 item::item(int vertex, float w, float h)
@@ -15,7 +17,8 @@ item::item(int vertex, float w, float h)
 	width = w;
 	height = h;
 	vertexCount = vertex;
-
+	t = 0;
+	t_max = 0;
 }
 
 
@@ -26,6 +29,8 @@ item::~item()
 
 void item::nextFrame()
 {
+	t++;
+	if (t > t_max) t = 0;
 }
 
 void item::changePosition(map *cMap, int c)

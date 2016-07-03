@@ -83,49 +83,55 @@ world::world(bool mode)
 
 	else
 	{
-		//tworzenie kostki
 		float* vertices = NULL;
 		float* normals = NULL;
 		float* uvs = NULL;
 		int indeks;
+		
+		//tworzenie kostki
 		bool res = config::loadObj("3d\\cube.txt", vertices, uvs, normals, &indeks);
 		wall = new item(indeks,1,1);
+		wall->shine = 500.0f;
 		if (res)
 		{
 			wall->tex = config::loadTexture("3d\\cube.png");
 			createVAO(wall, vertices, uvs, normals, indeks);
-			printf("Stworzono buffor3d kostki\n");
+			printf("Stworzono buffor3d kostki z uchwytem do tekstury %d\n",wall->tex);
 		}
 
 		//tworzenie podlogi
 		res = config::loadObj("3d\\floor.txt", vertices, uvs, normals, &indeks);
 		floor = new item(indeks, 1, 1);
+		floor->shine = 400.0f;
 		if (res)
 		{
 			floor->tex = config::loadTexture("3d\\floor.png");
 			createVAO(floor, vertices, uvs, normals, indeks);
-			printf("Stworzono buffor3d podlogi\n");
+			printf("Stworzono buffor3d podlogi z uchwytem do tekstury %d\n", floor->tex);
 		}
 
 		//tworzenie monety
 		res = config::loadObj("3d\\coin.txt", vertices, uvs, normals, &indeks);
 		coin = new item(indeks, 1, 1);
+		coin->shine = 5.0f;
+		coin->t_max = 5000;
 		if (res)
 		{
 			coin->tex = config::loadTexture("3d\\coin.png");
 			createVAO(coin, vertices, uvs, normals, indeks);
-			printf("Stworzono buffor3d monety\n");
+			printf("Stworzono buffor3d monety z uchwytem do tekstury %d\n", coin->tex);
 		}
 
 		//tworzenie pacmana
 		res = config::loadObj("3d\\kulka.txt", vertices, uvs, normals, &indeks);
 		pacman* p = new pacman(indeks, cMap);
+		p->shine = 300.0f;
 		itemList.push_back(p);
 		if (res)
 		{
-			itemList[0]->tex = config::loadTexture("3d\\kulka.png");
+			itemList[0]->tex = config::loadTexture("3d\\ghost1.png");
 			createVAO(itemList[0], vertices, uvs, normals, indeks);
-			printf("Stworzono buffor3d pacmana\n");
+			printf("Stworzono buffor3d pacmana z uchwytem do tekstury %d\n", itemList[0]->tex);
 		}
 
 	}
@@ -164,8 +170,8 @@ world::~world()
 
 void world::changeCamera()
 {
-	float x = (itemList[0]->pos).x;
-	float y = (itemList[0]->pos).y;
+	float x = (itemList[0]->pos).x - 0.5f;
+	float y = (itemList[0]->pos).y - 0.5f;
 	cameraTarget = glm::vec3(x, y, 0.0f);
 	cameraPos = glm::vec3(x,y-distance, distance);
 }
@@ -187,8 +193,15 @@ void world::drawScene(GLFWwindow* window) {
 	if(!mode3d)drawMap2d(window, V);
 	else drawMap3d(window, V);
 
-	drawObject(itemList[0]->vao, itemList[0]->M, itemList[0]->vertexCount);
+	if (mode3d) drawObject(itemList[0]->vao, itemList[0]->tex, itemList[0]->shine, itemList[0]->M, itemList[0]->vertexCount);
+	else drawObject(itemList[0]->vao, itemList[0]->M, itemList[0]->vertexCount);
+
 	glfwSwapBuffers(window);
+
+	if (mode3d)
+	{
+		coin->nextFrame();
+	}
 
 }
 
@@ -200,7 +213,6 @@ void world::drawObject(GLuint vao, mat4 M, int vertexCount) {
 	glUniformMatrix4fv(shaderProgram->getUniformLocation("P"), 1, false, glm::value_ptr(P));
 	glUniformMatrix4fv(shaderProgram->getUniformLocation("V"), 1, false, glm::value_ptr(V));
 	glUniformMatrix4fv(shaderProgram->getUniformLocation("M"), 1, false, glm::value_ptr(M));
-	glUniform4f(shaderProgram->getUniformLocation("Light0"), 0, 0, 5, 1);
 
 	//Uaktywnienie VAO i tym samym uaktywnienie predefiniowanych w tym VAO powi¹zañ slotów atrybutów z tablicami z danymi
 	glBindVertexArray(vao);
@@ -212,25 +224,36 @@ void world::drawObject(GLuint vao, mat4 M, int vertexCount) {
 	glBindVertexArray(0);
 }
 
-void world::drawObject(GLuint vao, GLuint tex, mat4 M, int vertexCount) {
+void world::drawObject(GLuint vao, GLuint tex, float s, mat4 M, int vertexCount) {
 
 	shaderProgram->use();
 
 	glUniformMatrix4fv(shaderProgram->getUniformLocation("P"), 1, false, glm::value_ptr(P));
 	glUniformMatrix4fv(shaderProgram->getUniformLocation("V"), 1, false, glm::value_ptr(V));
 	glUniformMatrix4fv(shaderProgram->getUniformLocation("M"), 1, false, glm::value_ptr(M));
-	glUniform1i(shaderProgram->getUniformLocation("tex"), 0);
+	float x1 = cameraTarget.x;
+	float y1 = cameraTarget.y+2.0f;
+	float z1 = cameraTarget.z+0.0f;
+	float x0 = 0.0f;
+	float y0 = 2*float(cMap->h);
+	float z0 = -float(cMap->h)/2;
+	glUniform4f(shaderProgram->getUniformLocation("Light1"), x1, y1, z1, 1); //œwiat³o wydzielane przez pakmana
+	glUniform4f(shaderProgram->getUniformLocation("Light0"), x0, y0, z0, 1); //œwiat³o podstawowe, sta³e dla œwiata
+	glUniform1f(shaderProgram->getUniformLocation("shine"), s);
+	glUniform1f(shaderProgram->getUniformLocation("alpha"), 0.7f); //udzia³ œwiat³a 0
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glUniform1i(shaderProgram->getUniformLocation("tex"), 0); //0-numer jednostki teksturuj¹cej
 
 	//Uaktywnienie VAO i tym samym uaktywnienie predefiniowanych w tym VAO powi¹zañ slotów atrybutów z tablicami z danymi
 	glBindVertexArray(vao);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, tex);
-
 
 	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 
 	//Posprz¹tanie po sobie (niekonieczne w sumie je¿eli korzystamy z VAO dla ka¿dego rysowanego obiektu)
 	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void world::drawMap2d(GLFWwindow* window, mat4 V)
@@ -287,23 +310,25 @@ void world::drawMap3d(GLFWwindow* window, mat4 V)
 			if (cMap->m[j][i] == 'w')
 			{
 				//rysowanie kostki
-				drawObject(wall->vao, wall->tex, M, wall->vertexCount);
+				glm::mat4 Mw = glm::translate(M, glm::vec3(0.0f, 0.0f, 0.0f));
+				drawObject(wall->vao, wall->tex, wall->shine, Mw, wall->vertexCount);
 			}
 			else
 			{
 				//rysowanie podlogi
-				M = glm::translate(M, glm::vec3(0.0f, 0.0f, -1.0f));
-				drawObject(floor->vao, floor->tex, M, floor->vertexCount);
+				glm::mat4 Mf = glm::translate(M, glm::vec3(0.0f, 0.0f, 0.0f));
+				drawObject(floor->vao, floor->tex, floor->shine, Mf, floor->vertexCount);
 				if (cMap->m[j][i] == 'm')
 				{
 					//rysowanie monety
-					M = glm::translate(M, glm::vec3(0.5f, 0.5f, 0.5f));
-					drawObject(coin->vao, coin->tex, M, coin->vertexCount);
+					float angle = float(coin->t) / float(coin->t_max)*360;
+					glm::mat4 Mc = glm::translate(M, glm::vec3(-0.5f, -0.5f, 0.5f));
+					Mc = glm::rotate(Mc, angle, vec3(0, 0, 1));
+					drawObject(coin->vao, coin->tex, coin->shine, Mc, coin->vertexCount);
 				}
 			}
 		}
 	}
-
 }
 
 
@@ -324,4 +349,38 @@ void world::assignVBOtoAttribute(ShaderProgram *shaderProgram, char* attributeNa
 	glBindBuffer(GL_ARRAY_BUFFER, bufVBO);  //Uaktywnij uchwyt VBO 
 	glEnableVertexAttribArray(location); //W³¹cz u¿ywanie atrybutu o numerze slotu zapisanym w zmiennej location
 	glVertexAttribPointer(location, vertexSize, GL_FLOAT, GL_FALSE, 0, NULL); //Dane do slotu location maj¹ byæ brane z aktywnego VBO
+}
+
+
+void world::testowanie(const char* path,float* vertices, float* uvs, float* normals, int indeks)
+{
+	FILE* file = fopen(path, "w");
+	fprintf(file, "vertices[] = \n");
+	for (int i = 0; i < indeks; i++) 
+	{
+		if (i % 3 == 0) fprintf(file, "\n");
+		for (int j = 0; j < 4; j++)
+			fprintf(file, "\t%f", vertices[i * 4 + j]);
+		fprintf(file, "\n");
+	}
+
+	fprintf(file, "uvs[] = \n");
+	for (int i = 0; i < indeks; i++)
+	{
+		if (i % 3 == 0) fprintf(file, "\n");
+		for (int j = 0; j < 2; j++)
+			fprintf(file, "\t%f", uvs[i * 2 + j]);
+		fprintf(file, "\n");
+	}
+
+	fprintf(file, "normals[] = \n");
+	for (int i = 0; i < indeks; i++)
+	{
+		if (i % 3 == 0) fprintf(file, "\n");
+		for (int j = 0; j < 4; j++)
+			fprintf(file, "\t%f", normals[i * 4 + j]);
+		fprintf(file, "\n");
+	}
+
+	fclose(file);
 }

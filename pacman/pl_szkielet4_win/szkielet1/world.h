@@ -49,9 +49,11 @@ public:
 	void createVAO(item* i, float* vertices, float* uvs, float* normals, int indeks);
 	void drawScene(GLFWwindow* window);
 	void drawObject(GLuint vao, mat4 M, int vertexCount);
-	void drawObject(GLuint vao, GLuint tex, mat4 M, int vertexCount);
+	void drawObject(GLuint vao, GLuint tex, float s, mat4 M, int vertexCount);
 	void drawMap2d(GLFWwindow* window, mat4 V);
 	void drawMap3d(GLFWwindow* window, mat4 V);
 	void changeCamera();
+
+	void testowanie(const char* path,float* vertices, float* uvs, float* normals, int indeks);
 };
 

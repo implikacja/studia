@@ -27,13 +27,16 @@ public:
 	float width;
 	float height;
 
+	int t;
+	int t_max;
+	float shine;
+
 	item();
 	item(int vertex, float w, float h);
 	virtual ~item();
 	virtual void nextFrame() ;
 	virtual void changePosition(map *cMap, int c);
 	bool collisionCheck(map *cMap);
-	
 
 };
 

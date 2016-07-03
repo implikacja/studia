@@ -299,12 +299,14 @@ bool config::loadObj(const char * path, float *& out_vertices, float*& out_uvs, 
 			fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
 			vertex.w = 1.0;
 			temp_vertices.push_back(vertex);
+			//printf("vertex:\t%f\t%f\t%f\t%f\n", vertex.x,vertex.y,vertex.z,vertex.w);
 		}
 		else if (strcmp(lineHeader, "vt") == 0)
 		{
 			glm::vec2 uv;
 			fscanf(file, "%f %f\n", &uv.x, &uv.y);
 			temp_uvs.push_back(uv);
+			//printf("uv:\t%f\t%f\n", uv.x, uv.y);
 		}
 		else if (strcmp(lineHeader, "vn") == 0)
 		{
@@ -312,6 +314,7 @@ bool config::loadObj(const char * path, float *& out_vertices, float*& out_uvs, 
 			fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
 			normal.w = 1.0;
 			temp_normals.push_back(normal);
+			//printf("normal:\t%f\t%f\t%f\t%f\n", normal.x, normal.y, normal.z, normal.w);
 		}
 		else if (strcmp(lineHeader, "f") == 0)
 		{
@@ -332,6 +335,10 @@ bool config::loadObj(const char * path, float *& out_vertices, float*& out_uvs, 
 			uvIndices.push_back(uvIndex[0]);
 			uvIndices.push_back(uvIndex[1]);
 			uvIndices.push_back(uvIndex[2]);
+
+			//for (int k = 0; k < 3; k++) printf("f%d:\t[%d][%d][%d]\n", k, vertexIndex[k], uvIndex[k], normalIndex[k]);
+			//printf("\n");
+
 		}
 		else
 		{
@@ -340,6 +347,9 @@ bool config::loadObj(const char * path, float *& out_vertices, float*& out_uvs, 
 		}
 
 	}
+
+	fclose(file);
+
 
 	*indeks = vertexIndices.size();
 	out_vertices = new float[4 * (*indeks)];
@@ -355,8 +365,8 @@ bool config::loadObj(const char * path, float *& out_vertices, float*& out_uvs, 
 		out_vertices[i * 4 + 1] = vertex.y;
 		out_vertices[i * 4 + 2] = vertex.z;
 		out_vertices[i * 4 + 3] = vertex.w;
+		//printf("vertex:\t%f\t%f\t%f\t%f\n", vertex.x, vertex.y, vertex.z, vertex.w);
 	}
-
 
 	for (unsigned int i = 0; i < normalIndices.size(); i++)
 	{
@@ -366,14 +376,16 @@ bool config::loadObj(const char * path, float *& out_vertices, float*& out_uvs, 
 		out_normals[i * 4 + 1] = normal.y;
 		out_normals[i * 4 + 2] = normal.z;
 		out_normals[i * 4 + 3] = normal.w;
+		//printf("normal:\t%f\t%f\t%f\t%f\n", normal.x, normal.y, normal.z, normal.w);
 	}
 
 	for (unsigned int i = 0; i < uvIndices.size(); i++)
 	{
 		unsigned int uvIndex = uvIndices[i];
 		glm::vec2 uv = temp_uvs[uvIndex - 1]; //-1,  bo w .obj wierzcho³ki s¹ indeksowane od 1
-		out_normals[i * 2] = uv.x;
-		out_normals[i * 2 + 1] = uv.y;
+		out_uvs[i * 2] = uv.x;
+		out_uvs[i * 2 + 1] = uv.y;
+		//printf("uv:\t%f\t%f\n", uv.x, uv.y);
 	}
 
 	return true;
@@ -400,6 +412,8 @@ GLuint config::loadTexture(const char* path)
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	return tex;
 }
