@@ -124,27 +124,35 @@ void ghost::gotoXY(int x, int y, map *cMap)
 		else if (m[i][j+1] < m[i][j])j++;
 	}
 
-	for (int i = 0; i < road.size(); i++)
-	{
-		printf("%d %d\n", road[i].first, road[i].second);
-	}
 
 }
 
-void ghost::changePosition(map *cMap, int c)
+void ghost::changePosition(map *cMap, int &c)
 {
 	if (nr == 1)
 	{
 		if (road.empty()) gotoXY(12, 12, cMap);
 
 	}
-	printf("%d %d\n", pos.intX, pos.intY);
+	else if (nr == 2)
+	{
+		if (road.empty()) gotoXY(12, 12, cMap);
+
+	}
+	else if (nr == 3)
+	{
+		if (road.empty()) gotoXY(12, 12, cMap);
+	}
+	else if (nr == 4)
+	{
+		if (road.empty()) gotoXY(12, 12, cMap);
+	}
+
 	if (road[0].first < pos.intX)pos.direction = 'l';
 	if (road[0].first > pos.intX)pos.direction = 'r';
 	if (road[0].second > pos.intY)pos.direction = 'd';
 	if (road[0].second < pos.intY)pos.direction = 'u';
-	road.erase(road.begin());
-	printf("%c\n", pos.direction);
+    if(!road.empty())road.erase(road.begin());
 
 	switch (pos.direction)
 	{

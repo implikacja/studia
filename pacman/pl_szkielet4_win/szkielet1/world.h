@@ -54,6 +54,7 @@ public:
 	void drawMap2d(GLFWwindow* window, mat4 V);
 	void drawMap3d(GLFWwindow* window, mat4 V);
 	void changeCamera();
+	void logic();
 
 	void testowanie(const char* path,float* vertices, float* uvs, float* normals, int indeks);
 };

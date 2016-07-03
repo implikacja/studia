@@ -95,10 +95,12 @@ void config::mainloop()
 		if (mode3d)
 		{
 			w3d->drawScene(window); //Wykonaj procedurê rysuj¹c¹
+			w3d->logic();
 		}
 		else
 		{
 			w2d->drawScene(window); //Wykonaj procedurê rysuj¹c¹
+			w2d->logic();
 		}
 
 

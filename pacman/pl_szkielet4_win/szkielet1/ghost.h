@@ -11,7 +11,7 @@ public:
 	ghost(int vertex, map *cMap, int n);
 	~ghost();
 	void gotoXY(int x, int y, map *cMap);
-	void changePosition(map *cMap, int c);
+	void changePosition(map *cMap, int &c);
 	
 	//enum state
 	//void nextFrame();

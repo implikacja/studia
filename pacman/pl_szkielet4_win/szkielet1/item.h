@@ -36,7 +36,7 @@ public:
 	item(int vertex, float w, float h);
 	virtual ~item();
 	virtual void nextFrame() ;
-	virtual void changePosition(map *cMap, int c);
+	virtual void changePosition(map *cMap, int &c);
 	bool collisionCheck(map *cMap);
 
 };

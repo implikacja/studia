@@ -79,11 +79,49 @@ world::world(bool mode)
 		assignVBOtoAttribute(shaderProgram, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
 		glBindVertexArray(0); //Dezaktywuj VAO
 
-		ghost *g = new ghost(6, cMap, 1);
-		itemList.push_back(g);
+		float colors3[] = {
+			0.0f, 1.0f, 1.0f, 1.0f,
+			0.0f, 1.0f, 1.0f, 1.0f,
+			0.0f, 1.0f, 1.0f, 1.0f,
+			0.0f, 1.0f, 1.0f, 1.0f,
+			0.0f, 1.0f, 1.0f, 1.0f,
+			0.0f, 1.0f, 1.0f, 1.0f,
+		};
+		ghost *g1 = new ghost(6, cMap, 1);
+		itemList.push_back(g1);
 
-		bufColors = makeBuffer(colors, c.vertexCount, sizeof(float) * 4);
+		bufColors = makeBuffer(colors3, c.vertexCount, sizeof(float) * 4);
 		glBindVertexArray(itemList[1]->vao);
+		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
+		assignVBOtoAttribute(shaderProgram, "color", bufColors, 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
+		assignVBOtoAttribute(shaderProgram, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
+		glBindVertexArray(0); //Dezaktywuj VAO
+
+		ghost *g2 = new ghost(6, cMap, 2);
+		itemList.push_back(g2);
+
+		bufColors = makeBuffer(colors3, c.vertexCount, sizeof(float) * 4);
+		glBindVertexArray(itemList[2]->vao);
+		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
+		assignVBOtoAttribute(shaderProgram, "color", bufColors, 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
+		assignVBOtoAttribute(shaderProgram, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
+		glBindVertexArray(0); //Dezaktywuj VAO
+
+		ghost *g3 = new ghost(6, cMap, 3);
+		itemList.push_back(g3);
+
+		bufColors = makeBuffer(colors3, c.vertexCount, sizeof(float) * 4);
+		glBindVertexArray(itemList[3]->vao);
+		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
+		assignVBOtoAttribute(shaderProgram, "color", bufColors, 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
+		assignVBOtoAttribute(shaderProgram, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
+		glBindVertexArray(0); //Dezaktywuj VAO
+
+		ghost *g4 = new ghost(6, cMap, 4);
+		itemList.push_back(g4);
+
+		bufColors = makeBuffer(colors3, c.vertexCount, sizeof(float) * 4);
+		glBindVertexArray(itemList[4]->vao);
 		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
 		assignVBOtoAttribute(shaderProgram, "color", bufColors, 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
 		assignVBOtoAttribute(shaderProgram, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
@@ -172,6 +210,9 @@ world::~world()
 	delete coin;
 	delete itemList[0];
 	delete itemList[1];
+	delete itemList[2];
+	delete itemList[3];
+	delete itemList[4];
 	delete shaderProgram; //Usuniêcie programu cieniuj¹cego
 	glDeleteBuffers(1, &bufVertices); //Usuniêcie VBO z wierzcho³kami
 	glDeleteBuffers(1, &bufColors); //Usuniêcie VBO z kolorami
@@ -191,13 +232,7 @@ void world::drawScene(GLFWwindow* window) {
 	//************Tutaj umieszczaj kod rysuj¹cy obraz******************l
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów
-	timer++;
-	if (timer == 20)
-	{
-		itemList[0]->changePosition(cMap,coins);
-		itemList[1]->changePosition(cMap, hp);
-		timer = 0;
-	}
+
 
 	if (mode3d) changeCamera();
 
@@ -205,14 +240,16 @@ void world::drawScene(GLFWwindow* window) {
 	if(!mode3d)drawMap2d(window, V);
 	else drawMap3d(window, V);
 
-<<<<<<< HEAD
-	if (mode3d) drawObject(itemList[0]->vao, itemList[0]->tex, itemList[0]->shine, itemList[0]->M, itemList[0]->vertexCount);
-	else drawObject(itemList[0]->vao, itemList[0]->M, itemList[0]->vertexCount);
-
-=======
-	drawObject(itemList[0]->vao, itemList[0]->M, itemList[0]->vertexCount);
-	drawObject(itemList[1]->vao, itemList[1]->M, itemList[1]->vertexCount);
->>>>>>> origin/master
+	if (mode3d)
+	{
+		for(int i = 0; i<itemList.size(); i++)
+		drawObject(itemList[i]->vao, itemList[i]->tex, itemList[i]->shine, itemList[i]->M, itemList[i]->vertexCount);
+	}
+	else
+	{
+		for (int i = 0; i<itemList.size(); i++)
+		drawObject(itemList[i]->vao, itemList[i]->M, itemList[i]->vertexCount);
+	}
 	glfwSwapBuffers(window);
 
 	if (mode3d)
@@ -294,14 +331,17 @@ void world::drawMap2d(GLFWwindow* window, mat4 V)
 			}
 			else if (cMap->m[j][i] == 'm')
 			{
-				if (j != itemList[1]->pos.intX || i != itemList[1]->pos.intY)
-				{
-					if (scalex > float(cMap->h / 2))scalex = float(-cMap->h / 2);
-					glm::mat4 M = glm::mat4(1.0f);
-					M = glm::translate(M, vec3(scalex, scaley, 0.0f));
-					drawObject(coin->vao, M, coin->vertexCount);
-				}
 
+					if (j != itemList[1]->pos.intX || i != itemList[1]->pos.intY)
+						if(j != itemList[2]->pos.intX || i != itemList[2]->pos.intY)
+							if(j != itemList[3]->pos.intX || i != itemList[3]->pos.intY)
+								if(j != itemList[4]->pos.intX || i != itemList[4]->pos.intY)
+								{
+									if (scalex > float(cMap->h / 2))scalex = float(-cMap->h / 2);
+									glm::mat4 M = glm::mat4(1.0f);
+									M = glm::translate(M, vec3(scalex, scaley, 0.0f));
+									drawObject(coin->vao, M, coin->vertexCount);
+								}
 
 			}
 	
@@ -401,4 +441,28 @@ void world::testowanie(const char* path,float* vertices, float* uvs, float* norm
 	}
 
 	fclose(file);
+}
+
+void world::logic()
+{
+	if (!mode3d)
+	{
+		timer++;
+			if (timer == 20)
+			{
+				itemList[0]->changePosition(cMap, coins);
+				for (int i = 1; i<itemList.size(); i++)
+					itemList[i]->changePosition(cMap, hp);
+				timer = 0;
+			}
+
+	}
+	else
+	{
+		itemList[0]->changePosition(cMap, coins);
+		for (int i = 1; i<itemList.size(); i++)
+			itemList[i]->changePosition(cMap, hp);
+		for (int i = 0; i<itemList.size(); i++)
+			itemList[i]->nextFrame();
+	}
 }

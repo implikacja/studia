@@ -48,7 +48,7 @@ void pacman::nextFrame()
 {
 }
 
-void pacman::changePosition(map *cMap, int c)
+void pacman::changePosition(map *cMap, int &c)
 {
 	if (config::c)
 	{

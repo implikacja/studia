@@ -33,7 +33,7 @@ void item::nextFrame()
 	if (t > t_max) t = 0;
 }
 
-void item::changePosition(map *cMap, int c)
+void item::changePosition(map *cMap, int &c)
 {
 
 }
