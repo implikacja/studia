@@ -34,6 +34,10 @@ pacman::pacman(int vertex, map *cMap)
 	pos.z = 0;
 	vertexCount = vertex;
 	M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+	start.x = pos.x;
+	start.y = pos.y;
+	start.intY = pos.intY;
+	start.intX = pos.intX;
 	pos.direction = 'u';
 	width = 1;
 	height = 1;
@@ -50,83 +54,105 @@ void pacman::nextFrame()
 
 void pacman::changePosition(map *cMap, int &c)
 {
-	if (config::c)
+	if (item::dead)
 	{
-		pos.direction = config::c;
-		config::c = NULL;
+		item::dead = 0;
+		pos.x = start.x;
+		pos.y = start.y;
+		pos.intY = start.intY;
+		pos.intX = start.intX;
+		pos.direction = 'u';
+		//tu mo¿na daæ jakiœ ekran ¿e zmar³ raz
 	}
-	if (!collisionCheck(cMap))
+	else
 	{
-		switch (pos.direction)
+		if (config::c)
 		{
-		case 'u':
-		{
-			pos.y += config::width;
-			pos.intY--;
-			if (cMap->m[pos.intX][pos.intY] == 'm')
-			{
-				c--;
-				cMap->m[pos.intX][pos.intY] = 'n';
-				if (!c) config::end = 1;
-
-			}
-			M = glm::mat4(1.0f);
-			M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
-			lastDir = 'u';
-			break;
+			pos.direction = config::c;
+			config::c = NULL;
 		}
-		case 'd':
+		if (!collisionCheck(cMap))
 		{
-			pos.y -= config::width;
-			pos.intY++;
-			if (cMap->m[pos.intX][pos.intY] == 'm')
+			switch (pos.direction)
 			{
-				c--;
-				cMap->m[pos.intX][pos.intY] = 'n';
-				if (!c) config::end = 1;
-
-			}
-			M = glm::mat4(1.0f);
-			M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
-			lastDir = 'd';
-			break;
-		}
-		case 'r':
-		{
-			pos.x += config::width;
-			pos.intX++;
-			if (cMap->m[pos.intX][pos.intY] == 'm')
+			case 'u':
 			{
-				c--;
 				cMap->m[pos.intX][pos.intY] = 'n';
-				if (!c) config::end = 1;
+				pos.y += config::width;
+				pos.intY--;
+				if (cMap->m[pos.intX][pos.intY] == 'm')
+				{
+					c--;
+					cMap->m[pos.intX][pos.intY] = 'n';
+					if (!c) config::end = 1;
 
+				}
+				M = glm::mat4(1.0f);
+				M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+				lastDir = 'u';
+				cMap->m[pos.intX][pos.intY] = 'p';
+				break;
 			}
-			M = glm::mat4(1.0f);
-			M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
-			lastDir = 'r';
-			break;
-		}
-		case 'l':
-		{
-			pos.x -= config::width;
-			pos.intX--;
-			if (cMap->m[pos.intX][pos.intY] == 'm')
+			case 'd':
 			{
-				c--;
 				cMap->m[pos.intX][pos.intY] = 'n';
-				if (!c) config::end = 1;
+				pos.y -= config::width;
+				pos.intY++;
+				if (cMap->m[pos.intX][pos.intY] == 'm')
+				{
+					c--;
+					cMap->m[pos.intX][pos.intY] = 'n';
+					if (!c) config::end = 1;
 
+				}
+				M = glm::mat4(1.0f);
+				M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+				lastDir = 'd';
+				cMap->m[pos.intX][pos.intY] = 'p';
+				break;
 			}
-			M = glm::mat4(1.0f);
-			M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
-			lastDir = 'l';
-			break;
-		}
-		default:
-			break;
+			case 'r':
+			{
+				cMap->m[pos.intX][pos.intY] = 'n';
+				pos.x += config::width;
+				pos.intX++;
+				if (cMap->m[pos.intX][pos.intY] == 'm')
+				{
+					c--;
+					cMap->m[pos.intX][pos.intY] = 'n';
+					if (!c) config::end = 1;
+
+				}
+				M = glm::mat4(1.0f);
+				M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+				lastDir = 'r';
+				cMap->m[pos.intX][pos.intY] = 'p';
+				break;
+			}
+			case 'l':
+			{
+				cMap->m[pos.intX][pos.intY] = 'n';
+				pos.x -= config::width;
+				pos.intX--;
+				if (cMap->m[pos.intX][pos.intY] == 'm')
+				{
+					c--;
+					cMap->m[pos.intX][pos.intY] = 'n';
+					if (!c) config::end = 1;
+
+				}
+				M = glm::mat4(1.0f);
+				M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+				lastDir = 'l';
+				cMap->m[pos.intX][pos.intY] = 'p';
+				break;
+			}
+			default:
+				break;
+			}
 		}
 	}
+	
 }
 
 

@@ -1,12 +1,14 @@
 #pragma once
 #include "item.h"
 #include "config.h"
+#include <time.h>
 class ghost :
 	public item
 {
 public:
 	int nr;
 	vector<pair<int, int>>road;
+	vector<pair<int, int>>vertex;
 	ghost();
 	ghost(int vertex, map *cMap, int n);
 	~ghost();

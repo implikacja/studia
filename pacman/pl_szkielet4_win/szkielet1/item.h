@@ -24,6 +24,7 @@ public:
 	point pos;
 	point start;
 	glm::mat4 M;
+	static int dead;//jeœli pacman w³aœnie umar³ to tu 1
 	int vertexCount;
 	float width;
 	float height;
