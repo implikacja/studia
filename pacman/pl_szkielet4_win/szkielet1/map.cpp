@@ -4,7 +4,7 @@
 map::map()
 {
 	ifstream file;
-	file.open("map.txt");
+	file.open("map_duza.txt");
 	if (file.good())
 	{
 		file >> w >> h;

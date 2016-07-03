@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include "shaderprogram.h"
 #include "pacman.h"
+#include "ghost.h"
 #include "models.h"
 #include "map.h"
 #include "config.h"

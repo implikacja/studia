@@ -22,6 +22,7 @@ public:
 	GLuint tex;
 
 	point pos;
+	point start;
 	glm::mat4 M;
 	int vertexCount;
 	float width;

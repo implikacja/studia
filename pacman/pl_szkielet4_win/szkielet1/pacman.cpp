@@ -17,7 +17,7 @@ pacman::pacman(int vertex, map *cMap)
 	{
 		for (int j = 0; j < cMap->h; j++)
 		{
-			if (pos.x >= cMap->h / 2)pos.x = -cMap->h / 2;
+			if (pos.x > cMap->h / 2)pos.x = -cMap->h / 2;
 			if (cMap->m[j][i] == 'p')
 			{
 				pos.intX = j;
@@ -144,7 +144,6 @@ bool pacman::collisionCheck(map *cMap)
 		if (pos.intX<cMap->h && cMap->m[pos.intX + 1][pos.intY] == 'w' && lastDir == 'r') flag = 1;
 
 	}
-	printf("2: %c %c\n", lastDir, pos.direction);
 
 
 	if (pos.intY>-1 && cMap->m[pos.intX][pos.intY - 1] == 'w' && pos.direction == 'u')
