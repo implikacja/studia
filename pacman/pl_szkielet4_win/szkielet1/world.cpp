@@ -240,7 +240,7 @@ void world::drawScene(GLFWwindow* window) {
 	if(!mode3d)drawMap2d(window, V);
 	else drawMap3d(window, V);
 
-<<<<<<< HEAD
+
 	if (mode3d)
 	{
 		for(int i = 0; i<itemList.size(); i++)
@@ -251,16 +251,7 @@ void world::drawScene(GLFWwindow* window) {
 		for (int i = 0; i<itemList.size(); i++)
 		drawObject(itemList[i]->vao, itemList[i]->M, itemList[i]->vertexCount);
 	}
-=======
-	if (mode3d) drawObject(itemList[0]->vao, itemList[0]->tex, itemList[0]->shine, itemList[0]->M, itemList[0]->vertexCount);
-	else
-	{
-		for(int i=0;i<itemList.size();i++) drawObject(itemList[i]->vao, itemList[i]->M, itemList[i]->vertexCount);
-		//drawObject(itemList[0]->vao, itemList[0]->M, itemList[0]->vertexCount);
-		//drawObject(itemList[1]->vao, itemList[1]->M, itemList[1]->vertexCount);
-	}
 
->>>>>>> origin/master
 	glfwSwapBuffers(window);
 
 	if (mode3d)
@@ -343,7 +334,7 @@ void world::drawMap2d(GLFWwindow* window, mat4 V)
 			if (cMap->m[j][i] == 'm')
 			{
 
-<<<<<<< HEAD
+
 					if (j != itemList[1]->pos.intX || i != itemList[1]->pos.intY)
 						if(j != itemList[2]->pos.intX || i != itemList[2]->pos.intY)
 							if(j != itemList[3]->pos.intX || i != itemList[3]->pos.intY)
@@ -355,8 +346,6 @@ void world::drawMap2d(GLFWwindow* window, mat4 V)
 									drawObject(coin->vao, M, coin->vertexCount);
 								}
 
-=======
->>>>>>> origin/master
 			}
 	
 		scalex	+= config::width;
