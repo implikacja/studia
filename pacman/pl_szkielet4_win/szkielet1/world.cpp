@@ -171,16 +171,39 @@ world::world(bool mode)
 		}
 
 		//tworzenie pacmana
-		res = config::loadObj("3d\\ghost1.txt", vertices, uvs, normals, &indeks);
+		res = config::loadObj("3d\\pacman0.txt", vertices, uvs, normals, &indeks);
 		pacman* p = new pacman(indeks, cMap);
 		p->shine = 300.0f;
+		p->t_max = 100.0f;
 		itemList.push_back(p);
 		if (res)
 		{
-			itemList[0]->tex = config::loadTexture("3d\\ghost1.png");
+			itemList[0]->tex = config::loadTexture("3d\\pacman.png");
 			createVAO(itemList[0], vertices, uvs, normals, indeks);
 			printf("Stworzono buffor3d pacmana z uchwytem do tekstury %d\n", itemList[0]->tex);
 		}
+
+		//tworzenie duchów
+		char file[] = "3d\\ghost1.txt";
+		char file2[] = "3d\\ghost1.png";
+		for (int i = 0; i < 4; i++)
+		{
+			file[8] = i + 49;
+			file2[8] = i + 49;
+			res = config::loadObj(file, vertices, uvs, normals, &indeks);
+			ghost* g = new ghost(indeks, cMap, 1);
+			g->shine = 300.0f;
+			g->t_max = 100;
+			itemList.push_back(g);
+			if (res)
+			{
+				itemList[i+1]->tex = config::loadTexture(file2);
+				createVAO(itemList[i+1], vertices, uvs, normals, indeks);
+				printf("Stworzono buffor3d ducha %d z uchwytem do tekstury %d\n", i, itemList[i+1]->tex);
+			}
+
+		}
+
 
 	}
 }
@@ -254,10 +277,12 @@ void world::drawScene(GLFWwindow* window) {
 
 	glfwSwapBuffers(window);
 
+	/*
 	if (mode3d)
 	{
 		coin->nextFrame();
 	}
+	*/
 
 }
 
@@ -296,7 +321,7 @@ void world::drawObject(GLuint vao, GLuint tex, float s, mat4 M, int vertexCount)
 	glUniform4f(shaderProgram->getUniformLocation("Light1"), x1, y1, z1, 1); //œwiat³o wydzielane przez pakmana
 	glUniform4f(shaderProgram->getUniformLocation("Light0"), x0, y0, z0, 1); //œwiat³o podstawowe, sta³e dla œwiata
 	glUniform1f(shaderProgram->getUniformLocation("shine"), s);
-	glUniform1f(shaderProgram->getUniformLocation("alpha"), 0.7f); //udzia³ œwiat³a 0
+	glUniform1f(shaderProgram->getUniformLocation("alpha"), 0.3f); //udzia³ œwiat³a 0
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, tex);
