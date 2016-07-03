@@ -1,4 +1,5 @@
 #include "world.h"
+#include "Windows.h"
 
 
 
@@ -139,7 +140,7 @@ world::world(bool mode)
 		//tworzenie kostki
 		bool res = config::loadObj("3d\\cube.txt", vertices, uvs, normals, &indeks);
 		wall = new item(indeks,1,1);
-		wall->shine = 500.0f;
+		wall->shine = WALL_SHINE;
 		if (res)
 		{
 			wall->tex = config::loadTexture("3d\\cube.png");
@@ -150,7 +151,7 @@ world::world(bool mode)
 		//tworzenie podlogi
 		res = config::loadObj("3d\\floor.txt", vertices, uvs, normals, &indeks);
 		floor = new item(indeks, 1, 1);
-		floor->shine = 400.0f;
+		floor->shine = FLOOR_SHINE;
 		if (res)
 		{
 			floor->tex = config::loadTexture("3d\\floor.png");
@@ -161,8 +162,8 @@ world::world(bool mode)
 		//tworzenie monety
 		res = config::loadObj("3d\\coin.txt", vertices, uvs, normals, &indeks);
 		coin = new item(indeks, 1, 1);
-		coin->shine = 5.0f;
-		coin->t_max = 5000;
+		coin->shine = COIN_SHINE;
+		coin->t_max = COIN_SPEED;
 		if (res)
 		{
 			coin->tex = config::loadTexture("3d\\coin.png");
@@ -173,8 +174,6 @@ world::world(bool mode)
 		//tworzenie pacmana
 		res = config::loadObj("3d\\pacman0.txt", vertices, uvs, normals, &indeks);
 		pacman* p = new pacman(indeks, cMap);
-		p->shine = 300.0f;
-		p->t_max = 100.0f;
 		itemList.push_back(p);
 		if (res)
 		{
@@ -191,9 +190,7 @@ world::world(bool mode)
 			file[8] = i + 49;
 			file2[8] = i + 49;
 			res = config::loadObj(file, vertices, uvs, normals, &indeks);
-			ghost* g = new ghost(indeks, cMap, 1);
-			g->shine = 300.0f;
-			g->t_max = 100;
+			ghost* g = new ghost(indeks, cMap, i+1);
 			itemList.push_back(g);
 			if (res)
 			{
@@ -203,7 +200,6 @@ world::world(bool mode)
 			}
 
 		}
-
 
 	}
 }
@@ -245,10 +241,10 @@ world::~world()
 
 void world::changeCamera()
 {
-	float x = (itemList[0]->pos).x - 0.5f;
-	float y = (itemList[0]->pos).y - 0.5f;
-	cameraTarget = glm::vec3(x, y, 0.0f);
-	cameraPos = glm::vec3(x,y-distance, distance);
+	float x = itemList[0]->getRealX() - 0.5f;
+	float y = itemList[0]->getRealY() - 0.5f;
+	cameraTarget = glm::vec3(x, y, 0.5f);
+	cameraPos = glm::vec3(x,y-CAMERA, CAMERA);
 }
 
 void world::drawScene(GLFWwindow* window) {
@@ -267,7 +263,7 @@ void world::drawScene(GLFWwindow* window) {
 	if (mode3d)
 	{
 		for(int i = 0; i<itemList.size(); i++)
-		drawObject(itemList[i]->vao, itemList[i]->tex, itemList[i]->shine, itemList[i]->M, itemList[i]->vertexCount);
+		drawObject(itemList[i]->vao, itemList[i]->tex, itemList[i]->shine, itemList[i]->getRealMatrix(), itemList[i]->vertexCount);
 	}
 	else
 	{
@@ -276,13 +272,6 @@ void world::drawScene(GLFWwindow* window) {
 	}
 
 	glfwSwapBuffers(window);
-
-	/*
-	if (mode3d)
-	{
-		coin->nextFrame();
-	}
-	*/
 
 }
 
@@ -321,7 +310,7 @@ void world::drawObject(GLuint vao, GLuint tex, float s, mat4 M, int vertexCount)
 	glUniform4f(shaderProgram->getUniformLocation("Light1"), x1, y1, z1, 1); //œwiat³o wydzielane przez pakmana
 	glUniform4f(shaderProgram->getUniformLocation("Light0"), x0, y0, z0, 1); //œwiat³o podstawowe, sta³e dla œwiata
 	glUniform1f(shaderProgram->getUniformLocation("shine"), s);
-	glUniform1f(shaderProgram->getUniformLocation("alpha"), 0.3f); //udzia³ œwiat³a 0
+	glUniform1f(shaderProgram->getUniformLocation("alpha"), ALPHA); //udzia³ œwiat³a 0
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, tex);
@@ -487,10 +476,13 @@ void world::logic()
 	}
 	else
 	{
-		itemList[0]->changePosition(cMap, coins);
+		if(itemList[0]->t==0) itemList[0]->changePosition(cMap, coins);
 		for (int i = 1; i<itemList.size(); i++)
-			itemList[i]->changePosition(cMap, hp);
+			if (itemList[i]->t == 0) itemList[i]->changePosition(cMap, hp);
 		for (int i = 0; i<itemList.size(); i++)
 			itemList[i]->nextFrame();
+		coin->nextFrame();
+
+		//Sleep(2000);
 	}
 }

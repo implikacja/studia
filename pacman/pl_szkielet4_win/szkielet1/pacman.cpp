@@ -34,6 +34,7 @@ pacman::pacman(int vertex, map *cMap)
 	pos.z = 0;
 	vertexCount = vertex;
 	M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+	pM = glm::mat4(0.0f);
 	start.x = pos.x;
 	start.y = pos.y;
 	start.intY = pos.intY;
@@ -42,13 +43,12 @@ pacman::pacman(int vertex, map *cMap)
 	width = 1;
 	height = 1;
 	lastDir = 'u';
+
+	t_max = PACMAN_SPEED;
+	shine = PACMAN_SHINE;
 }
 
 pacman::~pacman()
-{
-}
-
-void pacman::nextFrame()
 {
 }
 
@@ -64,6 +64,7 @@ void pacman::changePosition(map *cMap, int &c)
 		pos.direction = 'u';
 		M = glm::mat4(1.0f);
 		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+		pM = glm::mat4(0.0f);
 		//tu mo¿na daæ jakiœ ekran ¿e zmar³ raz
 	}
 	else
@@ -73,6 +74,7 @@ void pacman::changePosition(map *cMap, int &c)
 			pos.direction = config::c;
 			config::c = NULL;
 		}
+		pM = M; //zapamietanie starego M
 		if (!collisionCheck(cMap))
 		{
 			switch (pos.direction)

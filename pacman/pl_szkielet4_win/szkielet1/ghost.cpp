@@ -55,6 +55,7 @@ ghost::ghost(int vertex, map *cMap, int n)
 	pos.z = 0;
 	vertexCount = vertex;
 	M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+	pM = glm::mat4(1.0f);
 	width = 1;
 	height = 1;
 	road.clear();
@@ -71,6 +72,8 @@ ghost::ghost(int vertex, map *cMap, int n)
 				ghost::vertex.push_back(make_pair(j, i));
 		}
 	}
+	t_max = GHOST_SPEED;
+	shine = GHOST_SHINE;
 }
 
 ghost::~ghost()

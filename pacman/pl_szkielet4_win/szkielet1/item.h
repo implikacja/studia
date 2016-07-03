@@ -23,13 +23,14 @@ public:
 
 	point pos;
 	point start;
+	glm::mat4 pM; //wczesniejsza macierz
 	glm::mat4 M;
 	static int dead;//jeœli pacman w³aœnie umar³ to tu 1
 	int vertexCount;
 	float width;
 	float height;
 
-	int t;
+	int t = 0;
 	int t_max;
 	float shine;
 
@@ -39,6 +40,9 @@ public:
 	virtual void nextFrame() ;
 	virtual void changePosition(map *cMap, int &c);
 	bool collisionCheck(map *cMap);
+	glm::mat4 getRealMatrix();
+	float getRealX();
+	float getRealY();
 
 };
 

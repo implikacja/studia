@@ -14,7 +14,6 @@ public:
 	pacman(int vertex, map *cMap);
 	~pacman();
 	void changePosition(map *cMap, int &c);
-	void nextFrame();
 	bool collisionCheck(map *cMap);
 };
 

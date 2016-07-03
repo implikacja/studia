@@ -22,4 +22,17 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 const float PI = 3.141592653589793f;
 
+const int PACMAN_SPEED = 10;
+const int GHOST_SPEED = 20;
+const int COIN_SPEED = 5000;
+
+const float PACMAN_SHINE = 500;
+const float GHOST_SHINE = 500;
+const float COIN_SHINE = 10;
+const float FLOOR_SHINE = 300;
+const float WALL_SHINE = 400;
+
+const float ALPHA = 0.3f; //udzia³ œwiat³a g³ównego w oœwietleniu sceny
+const float CAMERA = 5.0f; //odleg³oœæ kamery od pacmana w osi y i z
+
 #endif
