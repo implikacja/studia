@@ -139,6 +139,8 @@ void ghost::gotoXY(int x, int y, map *cMap)
 
 void ghost::changePosition(map *cMap, int &c)
 {
+	if(item::dead)
+	{ }
 	srand(time(0));
 	if (nr == 1)
 	{
@@ -213,6 +215,7 @@ void ghost::changePosition(map *cMap, int &c)
 			pos.y = start.y;
 			pos.intX = start.intX;
 			pos.intY = start.intY;
+
 		}
 		M = glm::mat4(1.0f);
 		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
@@ -239,7 +242,6 @@ void ghost::changePosition(map *cMap, int &c)
 		}
 		M = glm::mat4(1.0f);
 		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
-		if (nr == 2) printf("pos %d %d\n", pos.intX, pos.intY);
 		break;
 	}
 	case 'r':
@@ -262,7 +264,6 @@ void ghost::changePosition(map *cMap, int &c)
 		}
 		M = glm::mat4(1.0f);
 		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
-		if (nr == 2) printf("pos %d %d\n", pos.intX, pos.intY);
 		break;
 	}
 	case 'l':
@@ -285,7 +286,6 @@ void ghost::changePosition(map *cMap, int &c)
 		}
 		M = glm::mat4(1.0f);
 		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
-		if (nr == 2) printf("pos %d %d\n", pos.intX, pos.intY);
 		break;
 	}
 	default:

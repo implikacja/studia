@@ -62,6 +62,8 @@ void pacman::changePosition(map *cMap, int &c)
 		pos.intY = start.intY;
 		pos.intX = start.intX;
 		pos.direction = 'u';
+		M = glm::mat4(1.0f);
+		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
 		//tu mo¿na daæ jakiœ ekran ¿e zmar³ raz
 	}
 	else
