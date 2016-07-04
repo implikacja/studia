@@ -23,6 +23,8 @@ ghost::ghost(int vertex, map *cMap, int n)
 				pos.intX = j;
 				pos.intY = i;
 				flag = 1;
+				ghostPos[0][0] = pos.intX;
+				ghostPos[0][1] = pos.intY;
 				break;
 			}
 			else if (cMap->m[j][i] == 'b' && n == 2)
@@ -30,6 +32,8 @@ ghost::ghost(int vertex, map *cMap, int n)
 				pos.intX = j;
 				pos.intY = i;
 				flag = 1;
+				ghostPos[1][0] = pos.intX;
+				ghostPos[1][1] = pos.intY;
 				break;
 			}
 			else if (cMap->m[j][i] == 'c' && n == 3)
@@ -37,6 +41,8 @@ ghost::ghost(int vertex, map *cMap, int n)
 				pos.intX = j;
 				pos.intY = i;
 				flag = 1;
+				ghostPos[2][0] = pos.intX;
+				ghostPos[2][1] = pos.intY;
 				break;
 			}
 			else if (cMap->m[j][i] == 'd' && n == 4)
@@ -44,6 +50,8 @@ ghost::ghost(int vertex, map *cMap, int n)
 				pos.intX = j;
 				pos.intY = i;
 				flag = 1;
+				ghostPos[3][0] = pos.intX;
+				ghostPos[3][1] = pos.intY;
 				break;
 			}
 
@@ -142,156 +150,194 @@ void ghost::gotoXY(int x, int y, map *cMap)
 
 void ghost::changePosition(map *cMap, int &c)
 {
-	if(item::dead)
-	{ }
-	srand(time(0));
-	if (nr == 1)
+	if (item::dead == 1 && item::nextDead != 0)
 	{
-		if (road.empty() && pos.intX == start.intX && pos.intY == start.intY)
+		c--;
+		if (!c)
 		{
-			gotoXY(23, 23, cMap);
-		}
-		else if (road.empty()) gotoXY(start.intX, start.intY, cMap);
-
-	}
-	else if (nr == 2)
-	{
-		if (road.empty())
-		{
-			int r = rand() % vertex.size();
-
-			int x = vertex[r].first;
-			int y = vertex[r].second;
-			gotoXY(x, y, cMap);
+			config::end = -1;
+			return;
 		}
 	}
-	else if (nr == 3)
+	if (nextDead==nr)
 	{
-		if (road.empty())
-		{
-			int r = rand() % vertex.size();
-			r = (r + rand() % 9) % vertex.size();
 
-			int x = vertex[r].first;
-			int y = vertex[r].second;
-			gotoXY(x, y, cMap);
-		}
+		pos.x = start.x;
+		pos.y = start.y;
+		pos.intX = start.intX;
+		pos.intY = start.intY;
+		nextDead = 0;
+		M = glm::mat4(1.0f);
+		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+		ghostPos[nr - 1][0] = pos.intX;
+		ghostPos[nr - 1][1] = pos.intY;
 	}
-	else if (nr == 4)
+	else
 	{
-		for (int i = 0; i < cMap->h; i++)
+		if (item::dead)
 		{
-			for (int j = 0; j < cMap->w; j++)
+		}
+		srand(time(0));
+		if (nr == 1)
+		{
+			if (road.empty() && pos.intX == start.intX && pos.intY == start.intY)
 			{
-				if (cMap->m[j][i] == 'p')
+				gotoXY(23, 23, cMap);
+			}
+			else if (road.empty()) gotoXY(start.intX, start.intY, cMap);
+
+		}
+		else if (nr == 2)
+		{
+			if (road.empty())
+			{
+				int r = rand() % vertex.size();
+
+				int x = vertex[r].first;
+				int y = vertex[r].second;
+				gotoXY(x, y, cMap);
+			}
+		}
+		else if (nr == 3)
+		{
+			if (road.empty())
+			{
+				int r = rand() % vertex.size();
+				r = (r + rand() % 9) % vertex.size();
+
+				int x = vertex[r].first;
+				int y = vertex[r].second;
+				gotoXY(x, y, cMap);
+			}
+		}
+		else if (nr == 4)
+		{
+			for (int i = 0; i < cMap->h; i++)
+			{
+				for (int j = 0; j < cMap->w; j++)
 				{
-					road.clear();
-					gotoXY(j, i, cMap);
+					if (cMap->m[j][i] == 'p')
+					{
+						road.clear();
+						gotoXY(j, i, cMap);
+					}
 				}
 			}
 		}
-	}
 
-	if (road[0].first < pos.intX)pos.direction = 'l';
-	if (road[0].first > pos.intX)pos.direction = 'r';
-	if (road[0].second > pos.intY)pos.direction = 'd';
-	if (road[0].second < pos.intY)pos.direction = 'u';
-    if(!road.empty())road.erase(road.begin());
+		if (road[0].first < pos.intX)pos.direction = 'l';
+		if (road[0].first > pos.intX)pos.direction = 'r';
+		if (road[0].second > pos.intY)pos.direction = 'd';
+		if (road[0].second < pos.intY)pos.direction = 'u';
+		if (!road.empty())road.erase(road.begin());
 
 
-	switch (pos.direction)
-	{
-	case 'u':
-	{
-		pos.y += config::width;
-		pos.intY--;
-		if (cMap->m[pos.intX][pos.intY] == 'p')
+		switch (pos.direction)
 		{
-			item::dead = 1;
-			c--;
-			if (!c)
+		case 'u':
+		{
+			pos.y += config::width;
+			pos.intY--;
+			if (cMap->m[pos.intX][pos.intY] == 'p')
 			{
-				config::end = -1;
-				return;
-			}
-			pos.x = start.x;
-			pos.y = start.y;
-			pos.intX = start.intX;
-			pos.intY = start.intY;
+				item::dead = 1;
+				c--;
+				if (!c)
+				{
+					config::end = -1;
+					return;
+				}
+				pos.x = start.x;
+				pos.y = start.y;
+				pos.intX = start.intX;
+				pos.intY = start.intY;
 
-		}
-		M = glm::mat4(1.0f);
-		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+			}
+			M = glm::mat4(1.0f);
+			M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+			ghostPos[nr - 1][0] = pos.intX;
+			ghostPos[nr - 1][1] = pos.intY;
 
-		break;
-	}
-	case 'd':
-	{
-		pos.y -= config::width;
-		pos.intY++;
-		if (cMap->m[pos.intX][pos.intY] == 'p')
-		{
-			item::dead = 1;
-			c--;
-			if (!c)
-			{
-				config::end = -1;
-				return;
-			}
-			pos.x = start.x;
-			pos.y = start.y;
-			pos.intX = start.intX;
-			pos.intY = start.intY;
+
+			break;
 		}
-		M = glm::mat4(1.0f);
-		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
-		break;
-	}
-	case 'r':
-	{
-		pos.x += config::width;
-		pos.intX++;
-		if (cMap->m[pos.intX][pos.intY] == 'p')
+		case 'd':
 		{
-			item::dead = 1;
-			c--;
-			if (!c)
+			pos.y -= config::width;
+			pos.intY++;
+			if (cMap->m[pos.intX][pos.intY] == 'p')
 			{
-				config::end = -1;
-				return;
+				item::dead = 1;
+				c--;
+				if (!c)
+				{
+					config::end = -1;
+					return;
+				}
+				pos.x = start.x;
+				pos.y = start.y;
+				pos.intX = start.intX;
+				pos.intY = start.intY;
 			}
-			pos.x = start.x;
-			pos.y = start.y;
-			pos.intX = start.intX;
-			pos.intY = start.intY;
+			M = glm::mat4(1.0f);
+			M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+			ghostPos[nr - 1][0] = pos.intX;
+			ghostPos[nr - 1][1] = pos.intY;
+			break;
 		}
-		M = glm::mat4(1.0f);
-		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
-		break;
-	}
-	case 'l':
-	{
-		pos.x -= config::width;
-		pos.intX--;
-		if (cMap->m[pos.intX][pos.intY] == 'p')
+
+		case 'r':
 		{
-			item::dead = 1;
-			c--;
-			if (!c)
+			pos.x += config::width;
+			pos.intX++;
+			if (cMap->m[pos.intX][pos.intY] == 'p')
 			{
-				config::end = -1;
-				return;
+				item::dead = 1;
+				c--;
+				if (!c)
+				{
+					config::end = -1;
+					return;
+				}
+				pos.x = start.x;
+				pos.y = start.y;
+				pos.intX = start.intX;
+				pos.intY = start.intY;
 			}
-			pos.x = start.x;
-			pos.y = start.y;
-			pos.intX = start.intX;
-			pos.intY = start.intY;
+			ghostPos[nr - 1][0] = pos.intX;
+			ghostPos[nr - 1][1] = pos.intY;
+			M = glm::mat4(1.0f);
+			M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+			break;
 		}
-		M = glm::mat4(1.0f);
-		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
-		break;
+		case 'l':
+		{
+			pos.x -= config::width;
+			pos.intX--;
+			if (cMap->m[pos.intX][pos.intY] == 'p')
+			{
+				item::dead = 1;
+				c--;
+				if (!c)
+				{
+					config::end = -1;
+					return;
+				}
+				pos.x = start.x;
+				pos.y = start.y;
+				pos.intX = start.intX;
+				pos.intY = start.intY;
+			}
+			ghostPos[nr - 1][0] = pos.intX;
+			ghostPos[nr - 1][1] = pos.intY;
+			M = glm::mat4(1.0f);
+			M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+			break;
+		}
+		default:
+			break;
+		}
+	
 	}
-	default:
-		break;
-	}
+	
 }

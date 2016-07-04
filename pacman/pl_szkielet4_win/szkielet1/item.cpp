@@ -2,6 +2,9 @@
 #include "constants.h"
 
 int item::dead = 0;
+int item::nextDead = 0;
+int item::ghostPos[4][2] = { {0,0} , {0,0}, {0,0} , {0,0} };
+
 item::item()
 {
 	M = glm::mat4(1.0f);
@@ -21,6 +24,7 @@ item::item(int vertex, float w, float h)
 	height = h;
 	vertexCount = vertex;
 	t_max = 0;
+	pacmanDir = 'u';
 }
 
 

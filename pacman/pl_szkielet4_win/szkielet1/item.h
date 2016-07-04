@@ -26,9 +26,12 @@ public:
 	glm::mat4 pM; //wczesniejsza macierz
 	glm::mat4 M;
 	static int dead;//jeœli pacman w³aœnie umar³ to tu 1
+	static int nextDead;
+	static int ghostPos[4][2];
 	int vertexCount;
 	float width;
 	float height;
+	char pacmanDir;
 
 	int t = 0;
 	int t_max;
