@@ -56,14 +56,17 @@ void pacman::changePosition(map *cMap, int &c)
 {
 	if (item::dead)
 	{
+		cMap->m[pos.intX][pos.intY] = 'n';
 		item::dead = 0;
 		pos.x = start.x;
 		pos.y = start.y;
 		pos.intY = start.intY;
 		pos.intX = start.intX;
 		pos.direction = 'u';
+		pacmanDir = pos.direction;
 		M = glm::mat4(1.0f);
 		M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+		cMap->m[pos.intX][pos.intY] = 'p';
 		pM = glm::mat4(0.0f);
 		//tu mo¿na daæ jakiœ ekran ¿e zmar³ raz
 	}
@@ -91,10 +94,13 @@ void pacman::changePosition(map *cMap, int &c)
 					if (!c) config::end = 1;
 
 				}
+				
+				
 				M = glm::mat4(1.0f);
 				M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
 				lastDir = 'u';
 				cMap->m[pos.intX][pos.intY] = 'p';
+				pacmanDir = pos.direction;
 				break;
 			}
 			case 'd':
@@ -113,6 +119,7 @@ void pacman::changePosition(map *cMap, int &c)
 				M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
 				lastDir = 'd';
 				cMap->m[pos.intX][pos.intY] = 'p';
+				pacmanDir = pos.direction;
 				break;
 			}
 			case 'r':
@@ -131,6 +138,7 @@ void pacman::changePosition(map *cMap, int &c)
 				M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
 				lastDir = 'r';
 				cMap->m[pos.intX][pos.intY] = 'p';
+				pacmanDir = pos.direction;
 				break;
 			}
 			case 'l':
@@ -149,11 +157,31 @@ void pacman::changePosition(map *cMap, int &c)
 				M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
 				lastDir = 'l';
 				cMap->m[pos.intX][pos.intY] = 'p';
+				pacmanDir = pos.direction;
 				break;
 			}
 			default:
 				break;
 			}
+		}
+	}
+	for (int i = 0; i < 4; i++)
+	{
+		if (ghostPos[i][0] == pos.intX && ghostPos[i][1] == pos.intY)
+		{
+			item::nextDead = i + 1;
+			cMap->m[pos.intX][pos.intY] = 'n';
+			item::dead = 1;
+			pos.x = start.x;
+			pos.y = start.y;
+			pos.intY = start.intY;
+			pos.intX = start.intX;
+			pos.direction = 'u';
+			pacmanDir = pos.direction;
+			M = glm::mat4(1.0f);
+			M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
+			cMap->m[pos.intX][pos.intY] = 'p';
+
 		}
 	}
 	
