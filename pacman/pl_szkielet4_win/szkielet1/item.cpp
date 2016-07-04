@@ -27,6 +27,7 @@ item::item(int vertex, float w, float h)
 item::~item()
 {
 	glDeleteVertexArrays(1, &vao); //Usuniêcie vao
+	glDeleteTextures(1, &tex);
 }
 
 void item::nextFrame()

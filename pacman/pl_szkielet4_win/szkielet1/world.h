@@ -33,6 +33,7 @@ public:
 	glm::mat4 V;
 	int timer;
     ShaderProgram *shaderProgram; //Wskaünik na obiekt reprezentujπcy program cieniujπcy.
+	ShaderProgram *shaderProgramA;
 	GLuint bufVertices;
 	GLuint bufColors;
 	GLuint bufNormals;
@@ -40,7 +41,7 @@ public:
 	glm::vec3 cameraPos;
 	glm::vec3 cameraTarget;
 	glm::vec3 cameraUp;
-	float distance; //definiuje oddalenie kamery od pacmana w osi y i z
+	float distance = CAMERA; //definiuje oddalenie kamery od pacmana w osi y i z
 
 	world();
 	world(bool mode);
@@ -48,9 +49,11 @@ public:
 	GLuint makeBuffer(void *data, int vertexCount, int vertexSize);
 	void assignVBOtoAttribute(ShaderProgram *shaderProgram, char* attributeName, GLuint bufVBO, int vertexSize);
 	void createVAO(item* i, float* vertices, float* uvs, float* normals, int indeks);
+	void createVAO(item* i, float* vertices1, float* vertices2, float* uvs, float* normals1, float* normals2, int indeks);
 	void drawScene(GLFWwindow* window);
 	void drawObject(GLuint vao, mat4 M, int vertexCount);
 	void drawObject(GLuint vao, GLuint tex, float s, mat4 M, int vertexCount);
+	void drawObject(GLuint vao, GLuint tex, float s, float t, mat4 M, int vertexCount);
 	void drawMap2d(GLFWwindow* window, mat4 V);
 	void drawMap3d(GLFWwindow* window, mat4 V);
 	void changeCamera();

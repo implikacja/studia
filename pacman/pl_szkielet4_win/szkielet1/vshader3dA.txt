@@ -1,0 +1,48 @@
+#version 330
+
+//Zmienne jednorodne
+uniform mat4 P;
+uniform mat4 V;
+uniform mat4 M;
+uniform vec4 Light0;
+uniform vec4 Light1;
+uniform float shine;
+uniform float alpha;
+uniform float t;
+
+//Atrybuty
+in vec4 vertex1; //wspolrzedne wierzcholka w przestrzeni modelu
+in vec4 vertex2;
+in vec4 normal1; //wektor normalny w wierzcholku (na razie ignorowany)
+in vec4 normal2;
+in vec2 uv;
+
+out vec4 vN; //interpolowany wektor normalny w przestrzeni oka
+out vec4 vV; //interpolowany wektor do obserwatora w przestrzeni oka
+out vec4 vL0; //interpolowany wektor do zrodla swiatla 0 w przestrzeni oka
+out vec4 vL1; //interpolowany wektor do zrodla swiatla 1 w przestrzeni oka
+
+out vec2 iuv;
+out float ishine;
+out float ialpha;
+
+void main(void)
+{
+	vec4 normal,vertex;
+	float a = sin(t);
+	vertex = mix(vertex1,vertex2,a);
+	normal = normalize(mix(normal1,normal2,a));
+	vertex.w = 1.0;
+	normal.w = 1.0;
+	
+	gl_Position=P*V*M*vertex; //Oblicz wspolrzedne wierzchołka w przestrzeni przyciecia
+
+	vN=normalize(V*M*normal); //Oblicz i interpoluj wektor normalny w przestrzeni oka
+	vL0=normalize(V*Light0-V*M*vertex); //Oblicz i interpoluj wektor do zrodla swiatla 0 w przestrzeni oka
+	vL1=normalize(V*Light1-V*M*vertex); //Oblicz i interpoluj wektor do zrodla swiatla 1 w przestrzeni oka
+	vV=normalize(vec4(0,0,0,1)-V*M*vertex); //Oblicz i interpoluj wektor do obserwatora w przestrzeni oka
+
+	iuv = uv;
+	ishine = shine;
+	ialpha = alpha;
+}

@@ -12,10 +12,14 @@ world::world(bool mode)
 {
 	timer = 0;
 	mode3d = mode;
-	distance = 5.0f;
 
 	shaderProgram = NULL;
-	if(mode3d) shaderProgram = new ShaderProgram("vshader3d.txt", NULL, "fshader3d.txt");
+	shaderProgramA = NULL;
+	if (mode3d)
+	{
+		shaderProgram = new ShaderProgram("vshader3d.txt", NULL, "fshader3d.txt");
+		shaderProgramA = new ShaderProgram("vshader3dA.txt", NULL, "fshader3d.txt");
+	}
 	else shaderProgram = new ShaderProgram("vshader.txt", NULL, "fshader.txt"); //Wczytaj program cieniuj¹cy 
 
 	cMap = new map();
@@ -172,13 +176,17 @@ world::world(bool mode)
 		}
 
 		//tworzenie pacmana
+		float* vertices2 = NULL;
+		float* normals2 = NULL;
+		float* uvs2 = NULL;
 		res = config::loadObj("3d\\pacman0.txt", vertices, uvs, normals, &indeks);
+		bool res2 = config::loadObj("3d\\pacman1.txt", vertices2, uvs2, normals2, &indeks);
 		pacman* p = new pacman(indeks, cMap);
 		itemList.push_back(p);
-		if (res)
+		if (res && res2)
 		{
 			itemList[0]->tex = config::loadTexture("3d\\pacman.png");
-			createVAO(itemList[0], vertices, uvs, normals, indeks);
+			createVAO(itemList[0], vertices, vertices2, uvs2, normals, normals2, indeks);
 			printf("Stworzono buffor3d pacmana z uchwytem do tekstury %d\n", itemList[0]->tex);
 		}
 
@@ -216,9 +224,50 @@ void world::createVAO(item* i, float* vertices, float* uvs, float* normals, int 
 	assignVBOtoAttribute(shaderProgram, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
 	glBindVertexArray(0);
 
+	glDeleteBuffers(1, &bufVertices);
+	glDeleteBuffers(1, &bufNormals);
+	glDeleteBuffers(1, &bufUvs);
+
 	delete[] vertices;
 	delete[] normals;
 	delete[] uvs;
+}
+
+void world::createVAO(item* i, float* vertices1, float* vertices2, float* uvs, float* normals1, float* normals2, int indeks)
+{
+	bufVertices = makeBuffer(vertices1, indeks, sizeof(float) * 4);
+	bufNormals = makeBuffer(normals1, indeks, sizeof(float) * 4);
+	bufUvs = makeBuffer(uvs, indeks, sizeof(float) * 2);
+
+	glBindVertexArray(i->vao); //Uaktywnij nowo utworzony VAO
+	assignVBOtoAttribute(shaderProgramA, "vertex1", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
+	assignVBOtoAttribute(shaderProgramA, "uv", bufUvs, 2); //"uv" odnosi siê do deklaracji "in vec2 uv;" w vertex shaderze
+	assignVBOtoAttribute(shaderProgramA, "normal1", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
+	glBindVertexArray(0);
+
+
+	glDeleteBuffers(1, &bufVertices);
+	glDeleteBuffers(1, &bufNormals);
+	glDeleteBuffers(1, &bufUvs);
+	delete[] vertices1;
+	delete[] normals1;
+	delete[] uvs;
+
+	bufVertices = makeBuffer(vertices2, indeks, sizeof(float) * 4);
+	bufNormals = makeBuffer(normals2, indeks, sizeof(float) * 4);
+
+	glBindVertexArray(i->vao); //Uaktywnij nowo utworzony VAO
+	assignVBOtoAttribute(shaderProgramA, "vertex2", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
+	assignVBOtoAttribute(shaderProgramA, "normal2", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
+	glBindVertexArray(0);
+
+
+	glDeleteBuffers(1, &bufVertices);
+	glDeleteBuffers(1, &bufNormals);
+	glDeleteBuffers(1, &bufUvs);
+	delete[] vertices2;
+	delete[] normals2;
+
 }
 
 world::~world()
@@ -233,6 +282,7 @@ world::~world()
 	delete itemList[3];
 	delete itemList[4];
 	delete shaderProgram; //Usuniêcie programu cieniuj¹cego
+	if (mode3d) delete shaderProgramA;
 	glDeleteBuffers(1, &bufVertices); //Usuniêcie VBO z wierzcho³kami
 	glDeleteBuffers(1, &bufColors); //Usuniêcie VBO z kolorami
 	glDeleteBuffers(1, &bufNormals); //Usuniêcie VBO z wektorami normalnymi
@@ -244,7 +294,7 @@ void world::changeCamera()
 	float x = itemList[0]->getRealX() - 0.5f;
 	float y = itemList[0]->getRealY() - 0.5f;
 	cameraTarget = glm::vec3(x, y, 0.5f);
-	cameraPos = glm::vec3(x,y-CAMERA, CAMERA);
+	cameraPos = glm::vec3(x,y-distance, distance);
 }
 
 void world::drawScene(GLFWwindow* window) {
@@ -262,7 +312,10 @@ void world::drawScene(GLFWwindow* window) {
 
 	if (mode3d)
 	{
-		for(int i = 0; i<itemList.size(); i++)
+		float t = (float)itemList[0]->t / itemList[0]->t_max;
+		drawObject(itemList[0]->vao, itemList[0]->tex, itemList[0]->shine, t*PI ,itemList[0]->getRealMatrix(), itemList[0]->vertexCount);
+		
+		for(int i = 1; i<itemList.size(); i++)
 		drawObject(itemList[i]->vao, itemList[i]->tex, itemList[i]->shine, itemList[i]->getRealMatrix(), itemList[i]->vertexCount);
 	}
 	else
@@ -317,6 +370,39 @@ void world::drawObject(GLuint vao, GLuint tex, float s, mat4 M, int vertexCount)
 	glUniform1i(shaderProgram->getUniformLocation("tex"), 0); //0-numer jednostki teksturuj¹cej
 
 	//Uaktywnienie VAO i tym samym uaktywnienie predefiniowanych w tym VAO powi¹zañ slotów atrybutów z tablicami z danymi
+	glBindVertexArray(vao);
+
+	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+
+	//Posprz¹tanie po sobie (niekonieczne w sumie je¿eli korzystamy z VAO dla ka¿dego rysowanego obiektu)
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void world::drawObject(GLuint vao, GLuint tex, float s, float t, mat4 M, int vertexCount) {
+
+	shaderProgramA->use();
+
+	glUniformMatrix4fv(shaderProgramA->getUniformLocation("P"), 1, false, glm::value_ptr(P));
+	glUniformMatrix4fv(shaderProgramA->getUniformLocation("V"), 1, false, glm::value_ptr(V));
+	glUniformMatrix4fv(shaderProgramA->getUniformLocation("M"), 1, false, glm::value_ptr(M));
+	float x1 = cameraTarget.x;
+	float y1 = cameraTarget.y + 2.0f;
+	float z1 = cameraTarget.z + 0.0f;
+	float x0 = 0.0f;
+	float y0 = 2 * float(cMap->h);
+	float z0 = -float(cMap->h) / 2;
+	glUniform4f(shaderProgramA->getUniformLocation("Light1"), x1, y1, z1, 1); //œwiat³o wydzielane przez pakmana
+	glUniform4f(shaderProgramA->getUniformLocation("Light0"), x0, y0, z0, 1); //œwiat³o podstawowe, sta³e dla œwiata
+	glUniform1f(shaderProgramA->getUniformLocation("shine"), s);
+	glUniform1f(shaderProgramA->getUniformLocation("alpha"), ALPHA); //udzia³ œwiat³a 0
+	glUniform1f(shaderProgramA->getUniformLocation("t"), t); //zmienna do interpolowania wierzcho³ków
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glUniform1i(shaderProgramA->getUniformLocation("tex"), 0); //0-numer jednostki teksturuj¹cej
+
+															  //Uaktywnienie VAO i tym samym uaktywnienie predefiniowanych w tym VAO powi¹zañ slotów atrybutów z tablicami z danymi
 	glBindVertexArray(vao);
 
 	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
