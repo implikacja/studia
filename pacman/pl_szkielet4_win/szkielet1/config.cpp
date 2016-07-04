@@ -6,6 +6,7 @@ bool config::instanceFlag = false;
 char config::c = NULL;
 float config::width = 1.0f;
 int config::end = 0;
+float config::cam = CAMERA;
 config::config()
 {
 	//mode3d = false;
@@ -75,15 +76,17 @@ void config::key_callback(GLFWwindow* window, int key,int scancode, int action, 
 		if (key == GLFW_KEY_RIGHT) config::c = 'r';
 		if (key == GLFW_KEY_UP) config::c = 'u';
 		if (key == GLFW_KEY_DOWN) config::c = 'd';
+		if (key == GLFW_KEY_Q) if (config::cam < 15.0f) cam += 0.1f;
+		if (key == GLFW_KEY_A) if (config::cam > 2.0f) cam -= 0.1f;
+
+	}
+	if (action == GLFW_REPEAT)
+	{
+		if (key == GLFW_KEY_Q) if (config::cam < 15.0f) cam += 0.1f;
+		if (key == GLFW_KEY_A) if (config::cam > 2.0f) cam -= 0.1f;
 	}
 
 
-	if (action == GLFW_RELEASE) {
-		//if (key == GLFW_KEY_LEFT) //speed_y = 0;
-		//if (key == GLFW_KEY_RIGHT) //speed_y = 0;
-		//if (key == GLFW_KEY_UP)
-		//if (key == GLFW_KEY_DOWN) //speed_x = 0;
-	}
 }
 
 

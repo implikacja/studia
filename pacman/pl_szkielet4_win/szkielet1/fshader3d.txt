@@ -45,8 +45,4 @@ void main(void) {
 	vec4 pc1 = Ma*La+Md*Ld*nl1+Ms*Ls*rv1;
 
 	pixelColor = ialpha*pc0+(1-ialpha)*pc1;
-	
-	//pixelColor = texture(tex,iuv);
-	
-	//pixelColor = vec4(1,1,0,1);
 }

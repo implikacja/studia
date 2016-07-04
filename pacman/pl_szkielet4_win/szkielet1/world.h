@@ -41,7 +41,6 @@ public:
 	glm::vec3 cameraPos;
 	glm::vec3 cameraTarget;
 	glm::vec3 cameraUp;
-	float distance = CAMERA; //definiuje oddalenie kamery od pacmana w osi y i z
 
 	world();
 	world(bool mode);

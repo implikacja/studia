@@ -35,6 +35,7 @@ public:
 	GLFWwindow* window; 
 	static char c;//odbierane w pacmanie
 	static int end;
+	static float cam;
 	static void error_callback(int error, const char* description);
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	void mainloop();

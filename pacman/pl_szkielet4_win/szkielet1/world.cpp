@@ -66,7 +66,7 @@ world::world(bool mode)
 		assignVBOtoAttribute(shaderProgram, "color", bufColors, 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
 		assignVBOtoAttribute(shaderProgram, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
 		glBindVertexArray(0); //Dezaktywuj VAO
-
+		glDeleteBuffers(1, &bufColors);
 		bufColors = makeBuffer(colors2, c.vertexCount, sizeof(float) * 4);
 		glBindVertexArray(coin->vao); //Uaktywnij nowo utworzony VAO
 		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
@@ -76,7 +76,7 @@ world::world(bool mode)
 
 		pacman *p = new pacman(6,cMap);
 		itemList.push_back(p);
-
+		glDeleteBuffers(1, &bufColors);
 		bufColors = makeBuffer(colors, c.vertexCount, sizeof(float) * 4);
 	glBindVertexArray(itemList[0]->vao);
 		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
@@ -94,7 +94,7 @@ world::world(bool mode)
 		};
 		ghost *g1 = new ghost(6, cMap, 1);
 		itemList.push_back(g1);
-
+		glDeleteBuffers(1, &bufColors);
 		bufColors = makeBuffer(colors3, c.vertexCount, sizeof(float) * 4);
 		glBindVertexArray(itemList[1]->vao);
 		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
@@ -104,7 +104,7 @@ world::world(bool mode)
 
 		ghost *g2 = new ghost(6, cMap, 2);
 		itemList.push_back(g2);
-
+		glDeleteBuffers(1, &bufColors);
 		bufColors = makeBuffer(colors3, c.vertexCount, sizeof(float) * 4);
 		glBindVertexArray(itemList[2]->vao);
 		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
@@ -114,7 +114,7 @@ world::world(bool mode)
 
 		ghost *g3 = new ghost(6, cMap, 3);
 		itemList.push_back(g3);
-
+		glDeleteBuffers(1, &bufColors);
 		bufColors = makeBuffer(colors3, c.vertexCount, sizeof(float) * 4);
 		glBindVertexArray(itemList[3]->vao);
 		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
@@ -124,13 +124,16 @@ world::world(bool mode)
 
 		ghost *g4 = new ghost(6, cMap, 4);
 		itemList.push_back(g4);
-
+		glDeleteBuffers(1, &bufColors);
 		bufColors = makeBuffer(colors3, c.vertexCount, sizeof(float) * 4);
 		glBindVertexArray(itemList[4]->vao);
 		assignVBOtoAttribute(shaderProgram, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
 		assignVBOtoAttribute(shaderProgram, "color", bufColors, 4); //"color" odnosi siê do deklaracji "in vec4 color;" w vertex shaderze
 		assignVBOtoAttribute(shaderProgram, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
 		glBindVertexArray(0); //Dezaktywuj VAO
+		glDeleteBuffers(1, &bufVertices);
+		glDeleteBuffers(1, &bufColors);
+		glDeleteBuffers(1, &bufNormals);
 
 	}
 
@@ -294,7 +297,7 @@ void world::changeCamera()
 	float x = itemList[0]->getRealX() - 0.5f;
 	float y = itemList[0]->getRealY() - 0.5f;
 	cameraTarget = glm::vec3(x, y, 0.5f);
-	cameraPos = glm::vec3(x,y-distance, distance);
+	cameraPos = glm::vec3(x,y-config::cam, config::cam);
 }
 
 void world::drawScene(GLFWwindow* window) {
