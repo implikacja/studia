@@ -109,9 +109,26 @@ void config::mainloop()
 
 		glfwPollEvents(); //Wykonaj procedury callback w zaleznoœci od zdarzeñ jakie zasz³y.
 	}
-	if (config::end == -1) printf("Przegrales\n");
-	if (config::end == 1) printf("Wygrales\n");
-	while (!glfwWindowShouldClose(window));
+
+
+	if (config::end == -1)
+	{
+		printf("Przegrales\n");
+		w3d->loadText("3d\\lose.txt", glm::vec4(0.7f, 0.0f, 0.0f, 1.0f));
+	}
+	else
+	{
+		w3d->loadText("3d\\win.txt", glm::vec4(0.0f, 0.7f, 0.0f, 1.0f));
+		printf("Wygrales\n");
+	}
+
+
+	while (!glfwWindowShouldClose(window) && mode3d)
+	{
+		w3d->drawScene(window);
+		w3d->text->nextFrame();
+		glfwPollEvents();
+	}
 }
 
 bool config::loadObj(const char * path, std::vector < glm::vec4 > & out_vertices, std::vector < glm::vec4 > & out_normals)
@@ -166,7 +183,7 @@ bool config::loadObj(const char * path, std::vector < glm::vec4 > & out_vertices
 		}
 		else
 		{
-			printf("%s: niew³aœciwy format w pliku. Znaleziono symbol inny ni¿ v, vn, f\n", path);
+			printf("%s: niew³aœciwy format w pliku. Znaleziono symbol inny ni¿ v, vn, f:\t%s\n", path, lineHeader);
 			return false;
 		}
 
@@ -245,7 +262,7 @@ bool config::loadObj(const char * path, float*& out_vertices, float*& out_normal
 		}
 		else
 		{
-			printf("%s: niew³aœciwy format w pliku. Znaleziono symbol inny ni¿ v, vn, f\n", path);
+			printf("%s: niew³aœciwy format w pliku. Znaleziono symbol inny ni¿ v, vn, f:\t%s\n", path, lineHeader);
 			return false;
 		}
 

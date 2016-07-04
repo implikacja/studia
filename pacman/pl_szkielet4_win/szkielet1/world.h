@@ -26,6 +26,8 @@ public:
 	item *wall;
 	item *floor;
 	item *coin;
+	item *text;
+	vec4 textColor;
 	map* cMap;
 	int coins;
 	int hp;
@@ -34,6 +36,7 @@ public:
 	int timer;
     ShaderProgram *shaderProgram; //Wskaünik na obiekt reprezentujπcy program cieniujπcy.
 	ShaderProgram *shaderProgramA;
+	ShaderProgram *shaderProgramC;
 	GLuint bufVertices;
 	GLuint bufColors;
 	GLuint bufNormals;
@@ -53,9 +56,13 @@ public:
 	void drawObject(GLuint vao, mat4 M, int vertexCount);
 	void drawObject(GLuint vao, GLuint tex, float s, mat4 M, int vertexCount);
 	void drawObject(GLuint vao, GLuint tex, float s, float t, mat4 M, int vertexCount);
+	void drawObject(GLuint vao, float t, mat4 M, int vertexCount);
 	void drawMap2d(GLFWwindow* window, mat4 V);
 	void drawMap3d(GLFWwindow* window, mat4 V);
 	void changeCamera();
+	void loadText(const char* path, vec4 color);
+	glm::vec3 world::setLight0();
+	glm::vec3 world::setLight1();
 	void logic();
 
 	void testowanie(const char* path,float* vertices, float* uvs, float* normals, int indeks);

@@ -19,6 +19,7 @@ world::world(bool mode)
 	{
 		shaderProgram = new ShaderProgram("vshader3d.txt", NULL, "fshader3d.txt");
 		shaderProgramA = new ShaderProgram("vshader3dA.txt", NULL, "fshader3d.txt");
+		shaderProgramC = new ShaderProgram("vshader3dC.txt", NULL, "fshader3dC.txt");
 	}
 	else shaderProgram = new ShaderProgram("vshader.txt", NULL, "fshader.txt"); //Wczytaj program cieniuj¹cy 
 
@@ -143,6 +144,8 @@ world::world(bool mode)
 		float* normals = NULL;
 		float* uvs = NULL;
 		int indeks;
+
+
 		
 		//tworzenie kostki
 		bool res = config::loadObj("3d\\cube.txt", vertices, uvs, normals, &indeks);
@@ -215,6 +218,38 @@ world::world(bool mode)
 	}
 }
 
+void world::loadText(const char* path, vec4 color)
+{
+	delete text;
+	textColor = color;
+
+	float* vertices = NULL;
+	float* normals = NULL;
+	int indeks;
+
+	//tworzenie kostki
+	bool res = config::loadObj(path, vertices, normals, &indeks);
+	text = new item(indeks, 1, 1);
+	text->t_max = TEXT_SPEED;
+	if (res)
+	{
+		bufVertices = makeBuffer(vertices, indeks, sizeof(float) * 4);
+		bufNormals = makeBuffer(normals, indeks, sizeof(float) * 4);
+
+		glBindVertexArray(text->vao); //Uaktywnij nowo utworzony VAO
+		assignVBOtoAttribute(shaderProgramC, "vertex", bufVertices, 4); //"vertex" odnosi siê do deklaracji "in vec4 vertex;" w vertex shaderze
+		assignVBOtoAttribute(shaderProgramC, "normal", bufNormals, 4); //"normal" odnosi siê do deklaracji "in vec4 normal;" w vertex shaderze
+		glBindVertexArray(0);
+
+		glDeleteBuffers(1, &bufVertices);
+		glDeleteBuffers(1, &bufNormals);
+
+		delete[] vertices;
+		delete[] normals;
+		printf("Stworzono buffor3d tekstu z pliku %s\n", path);
+	}
+}
+
 void world::createVAO(item* i, float* vertices, float* uvs, float* normals, int indeks)
 {
 	bufVertices = makeBuffer(vertices, indeks, sizeof(float) * 4);
@@ -279,13 +314,19 @@ world::~world()
 	delete wall;
 	delete floor;
 	delete coin;
+	delete text;
 	delete itemList[0];
 	delete itemList[1];
 	delete itemList[2];
 	delete itemList[3];
 	delete itemList[4];
 	delete shaderProgram; //Usuniêcie programu cieniuj¹cego
-	if (mode3d) delete shaderProgramA;
+	if (mode3d)
+	{
+		delete shaderProgramC;
+		delete shaderProgramA;
+	}
+
 	glDeleteBuffers(1, &bufVertices); //Usuniêcie VBO z wierzcho³kami
 	glDeleteBuffers(1, &bufColors); //Usuniêcie VBO z kolorami
 	glDeleteBuffers(1, &bufNormals); //Usuniêcie VBO z wektorami normalnymi
@@ -300,6 +341,24 @@ void world::changeCamera()
 	cameraPos = glm::vec3(x,y-config::cam, config::cam);
 }
 
+glm::vec3 world::setLight0()
+{
+	vec3 l;
+	l.x = 0.0f;
+	l.y = 2 * float(cMap->h);
+	l.z = -float(cMap->h) / 2;
+	return l;
+}
+
+glm::vec3 world::setLight1()
+{
+	vec3 l;
+	l.x = cameraTarget.x;
+	l.y = cameraTarget.y + 2.0f;
+	l.z = cameraTarget.z + 0.0f;
+	return l;
+}
+
 void world::drawScene(GLFWwindow* window) {
 	//************Tutaj umieszczaj kod rysuj¹cy obraz******************l
 
@@ -309,20 +368,30 @@ void world::drawScene(GLFWwindow* window) {
 	if (mode3d) changeCamera();
 
 	V = glm::lookAt( cameraPos, cameraTarget,cameraUp);
-	if(!mode3d)drawMap2d(window, V);
-	else drawMap3d(window, V);
 
 
 	if (mode3d)
 	{
-		float t = (float)itemList[0]->t / itemList[0]->t_max;
-		drawObject(itemList[0]->vao, itemList[0]->tex, itemList[0]->shine, t*PI ,itemList[0]->getRealMatrix(), itemList[0]->vertexCount);
+		if (config::end != 0)
+		{
+			float angle = (float)text->t / text->t_max;
+			drawObject(text->vao, angle, mat4(1.0f) ,text->vertexCount);
+		}
+		else
+		{
+			drawMap3d(window, V);
+
+			float t = (float)itemList[0]->t / itemList[0]->t_max;
+			drawObject(itemList[0]->vao, itemList[0]->tex, itemList[0]->shine, t*PI, itemList[0]->getRealMatrix(), itemList[0]->vertexCount);
+
+			for (int i = 1; i<itemList.size(); i++)
+				drawObject(itemList[i]->vao, itemList[i]->tex, itemList[i]->shine, itemList[i]->getRealMatrix(), itemList[i]->vertexCount);
+		}
 		
-		for(int i = 1; i<itemList.size(); i++)
-		drawObject(itemList[i]->vao, itemList[i]->tex, itemList[i]->shine, itemList[i]->getRealMatrix(), itemList[i]->vertexCount);
 	}
 	else
 	{
+		drawMap2d(window, V);
 		for (int i = 0; i<itemList.size(); i++)
 		drawObject(itemList[i]->vao, itemList[i]->M, itemList[i]->vertexCount);
 	}
@@ -357,14 +426,12 @@ void world::drawObject(GLuint vao, GLuint tex, float s, mat4 M, int vertexCount)
 	glUniformMatrix4fv(shaderProgram->getUniformLocation("P"), 1, false, glm::value_ptr(P));
 	glUniformMatrix4fv(shaderProgram->getUniformLocation("V"), 1, false, glm::value_ptr(V));
 	glUniformMatrix4fv(shaderProgram->getUniformLocation("M"), 1, false, glm::value_ptr(M));
-	float x1 = cameraTarget.x;
-	float y1 = cameraTarget.y+2.0f;
-	float z1 = cameraTarget.z+0.0f;
-	float x0 = 0.0f;
-	float y0 = 2*float(cMap->h);
-	float z0 = -float(cMap->h)/2;
-	glUniform4f(shaderProgram->getUniformLocation("Light1"), x1, y1, z1, 1); //œwiat³o wydzielane przez pakmana
-	glUniform4f(shaderProgram->getUniformLocation("Light0"), x0, y0, z0, 1); //œwiat³o podstawowe, sta³e dla œwiata
+
+	vec3 l0 = setLight0();
+	vec3 l1 = setLight1();
+
+	glUniform4f(shaderProgram->getUniformLocation("Light1"), l1.x, l1.y, l1.z, 1); //œwiat³o wydzielane przez pakmana
+	glUniform4f(shaderProgram->getUniformLocation("Light0"), l0.x, l0.y, l0.z, 1); //œwiat³o podstawowe, sta³e dla œwiata
 	glUniform1f(shaderProgram->getUniformLocation("shine"), s);
 	glUniform1f(shaderProgram->getUniformLocation("alpha"), ALPHA); //udzia³ œwiat³a 0
 
@@ -389,14 +456,12 @@ void world::drawObject(GLuint vao, GLuint tex, float s, float t, mat4 M, int ver
 	glUniformMatrix4fv(shaderProgramA->getUniformLocation("P"), 1, false, glm::value_ptr(P));
 	glUniformMatrix4fv(shaderProgramA->getUniformLocation("V"), 1, false, glm::value_ptr(V));
 	glUniformMatrix4fv(shaderProgramA->getUniformLocation("M"), 1, false, glm::value_ptr(M));
-	float x1 = cameraTarget.x;
-	float y1 = cameraTarget.y + 2.0f;
-	float z1 = cameraTarget.z + 0.0f;
-	float x0 = 0.0f;
-	float y0 = 2 * float(cMap->h);
-	float z0 = -float(cMap->h) / 2;
-	glUniform4f(shaderProgramA->getUniformLocation("Light1"), x1, y1, z1, 1); //œwiat³o wydzielane przez pakmana
-	glUniform4f(shaderProgramA->getUniformLocation("Light0"), x0, y0, z0, 1); //œwiat³o podstawowe, sta³e dla œwiata
+
+	vec3 l0 = setLight0();
+	vec3 l1 = setLight1();
+
+	glUniform4f(shaderProgramA->getUniformLocation("Light1"), l1.x, l1.y, l1.z, 1); //œwiat³o wydzielane przez pakmana
+	glUniform4f(shaderProgramA->getUniformLocation("Light0"), l0.x, l0.y, l0.z, 1); //œwiat³o podstawowe, sta³e dla œwiata
 	glUniform1f(shaderProgramA->getUniformLocation("shine"), s);
 	glUniform1f(shaderProgramA->getUniformLocation("alpha"), ALPHA); //udzia³ œwiat³a 0
 	glUniform1f(shaderProgramA->getUniformLocation("t"), t); //zmienna do interpolowania wierzcho³ków
@@ -413,6 +478,30 @@ void world::drawObject(GLuint vao, GLuint tex, float s, float t, mat4 M, int ver
 	//Posprz¹tanie po sobie (niekonieczne w sumie je¿eli korzystamy z VAO dla ka¿dego rysowanego obiektu)
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void world::drawObject(GLuint vao, float t, mat4 M, int vertexCount) 
+{
+
+	shaderProgramC->use();
+
+	mat4 tmp_V = glm::lookAt(vec3(0.0f,-5.0f,0.0f),vec3(0.0f,0.0f,0.0f),vec3(0.0f,0.0f,1.0f));
+	mat4 tmp_M = glm::rotate(glm::mat4(1.0f),t*360,vec3(0,0,1));
+
+	glUniformMatrix4fv(shaderProgramC->getUniformLocation("P"), 1, false, glm::value_ptr(P));
+	glUniformMatrix4fv(shaderProgramC->getUniformLocation("V"), 1, false, glm::value_ptr(tmp_V));
+	glUniformMatrix4fv(shaderProgramC->getUniformLocation("M"), 1, false, glm::value_ptr(tmp_M));
+	glUniform4f(shaderProgramC->getUniformLocation("light"), 0.0f, 2.0f, 0.0f, 1);
+
+	glUniform4f(shaderProgramC->getUniformLocation("color"), textColor.x, textColor.y, textColor.z, 1);
+
+															   //Uaktywnienie VAO i tym samym uaktywnienie predefiniowanych w tym VAO powi¹zañ slotów atrybutów z tablicami z danymi
+	glBindVertexArray(vao);
+
+	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+
+	//Posprz¹tanie po sobie (niekonieczne w sumie je¿eli korzystamy z VAO dla ka¿dego rysowanego obiektu)
+	glBindVertexArray(0);
 }
 
 void world::drawMap2d(GLFWwindow* window, mat4 V)

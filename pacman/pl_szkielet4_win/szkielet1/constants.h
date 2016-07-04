@@ -25,6 +25,7 @@ const float PI = 3.141592653589793f;
 const int PACMAN_SPEED = 20;
 const int GHOST_SPEED = 25;
 const int COIN_SPEED = 5000;
+const int TEXT_SPEED = 15000;
 
 const float PACMAN_SHINE = 500;
 const float GHOST_SHINE = 500;
