@@ -150,7 +150,7 @@ void ghost::gotoXY(int x, int y, map *cMap)
 
 void ghost::changePosition(map *cMap, int &c)
 {
-	if (item::dead == 1 && item::nextDead != 0)
+	if (nextDead==nr)
 	{
 		c--;
 		if (!c)
@@ -158,10 +158,6 @@ void ghost::changePosition(map *cMap, int &c)
 			config::end = -1;
 			return;
 		}
-	}
-	if (nextDead==nr)
-	{
-
 		pos.x = start.x;
 		pos.y = start.y;
 		pos.intX = start.intX;

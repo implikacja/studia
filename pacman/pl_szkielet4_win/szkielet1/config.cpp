@@ -93,7 +93,7 @@ void config::key_callback(GLFWwindow* window, int key,int scancode, int action, 
 void config::mainloop()
 {
 	//G³ówna pêtla
-	while (!glfwWindowShouldClose(window)) //Tak d³ugo jak okno nie powinno zostaæ zamkniête
+	while (!glfwWindowShouldClose(window) && config::end == 0) //Tak d³ugo jak okno nie powinno zostaæ zamkniête
 	{
 		if (mode3d)
 		{
@@ -109,6 +109,9 @@ void config::mainloop()
 
 		glfwPollEvents(); //Wykonaj procedury callback w zaleznoœci od zdarzeñ jakie zasz³y.
 	}
+	if (config::end == -1) printf("Przegrales\n");
+	if (config::end == 1) printf("Wygrales\n");
+	while (!glfwWindowShouldClose(window));
 }
 
 bool config::loadObj(const char * path, std::vector < glm::vec4 > & out_vertices, std::vector < glm::vec4 > & out_normals)
