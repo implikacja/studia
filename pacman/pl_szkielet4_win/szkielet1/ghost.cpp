@@ -55,7 +55,7 @@ ghost::ghost(int vertex, map *cMap, int n)
 	pos.z = 0;
 	vertexCount = vertex;
 	M = glm::translate(M, vec3(pos.x, pos.y, pos.z));
-	pM = glm::mat4(1.0f);
+	pM = glm::mat4(0.0f);
 	width = 1;
 	height = 1;
 	road.clear();

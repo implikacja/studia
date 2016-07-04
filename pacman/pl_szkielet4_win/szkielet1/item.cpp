@@ -1,4 +1,5 @@
 #include "item.h"
+#include "constants.h"
 
 int item::dead = 0;
 item::item()
@@ -32,7 +33,7 @@ void item::nextFrame()
 {
 	t++;
 	if (t > t_max || M==pM) t = 0;
-	printf("nextFrame: %d\n", t);
+	//printf("nextFrame: %d\n", t);
 }
 
 void item::changePosition(map *cMap, int &c)
@@ -47,28 +48,54 @@ bool item::collisionCheck(map *cMap)
 
 glm::mat4 item::getRealMatrix()
 {
-	if (M == pM || t==0) return M;
-	printf("Macierz z drobnym przesuniêciem %d/%d = %f\n",t,t_max,(float)t/t_max);
-	glm::mat4 rm;
+	mat4 m = glm::translate(M,vec3(-0.5f,-0.5f,0.0f));
+	if (M != pM && t != 0) m = translateModel(m);
+	m = rotateModel(m);
+	return m;
+}
+
+glm::mat4 item::rotateModel(mat4 m)
+{
 	switch (pos.direction)
 	{
 	case 'l':
-		rm = glm::translate(M, vec3(1-(float)t/t_max,0,0));
+		return m;
 		break;
 	case 'r':
-		rm = glm::translate(M, vec3(-1+(float)t / t_max, 0, 0));
+		return glm::rotate(m, PI, vec3(0, 0, 1));
 		break;
 	case 'u':
-		rm = glm::translate(M, vec3(0,-1+(float)t / t_max, 0));
+		return glm::rotate(m, 1.5f*PI, vec3(0, 0, 1));
 		break;
 	case 'd':
-		rm = glm::translate(M, vec3(0,1-(float)t / t_max, 0));
+		return glm::rotate(m, 0.5f*PI, vec3(0, 0, 1));
 		break;
 	default:
-		rm = M;
+		return m;
 		break;
 	}
-	return rm;
+}
+
+glm::mat4 item::translateModel(mat4 m)
+{
+	switch (pos.direction)
+	{
+	case 'l':
+		return glm::translate(m, vec3(1 - (float)t / t_max, 0, 0));
+		break;
+	case 'r':
+		return glm::translate(m, vec3(-1 + (float)t / t_max, 0, 0));
+		break;
+	case 'u':
+		return glm::translate(m, vec3(0, -1 + (float)t / t_max, 0));
+		break;
+	case 'd':
+		return glm::translate(m, vec3(0, 1 - (float)t / t_max, 0));
+		break;
+	default:
+		return M;
+		break;
+	}
 }
 
 float item::getRealX()

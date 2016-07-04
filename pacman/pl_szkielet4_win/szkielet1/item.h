@@ -41,6 +41,8 @@ public:
 	virtual void changePosition(map *cMap, int &c);
 	bool collisionCheck(map *cMap);
 	glm::mat4 getRealMatrix();
+	glm::mat4 rotateModel(glm::mat4 m);
+	glm::mat4 translateModel(glm::mat4 m);
 	float getRealX();
 	float getRealY();
 
